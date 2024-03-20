@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+
 import 'package:equatable/equatable.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
@@ -7,7 +8,7 @@ import 'package:quikhyr_worker/models/location_model.dart';
 class WorkerModel extends Equatable {
   final String userId;
   final String name;
-  final num? age;
+  final int? age;
   final bool available;
   final String avatar;
   final String email;
@@ -33,7 +34,7 @@ class WorkerModel extends Equatable {
   WorkerModel copyWith({
     String? userId,
     String? name,
-    num? age,
+    int? age,
     bool? available,
     String? avatar,
     String? email,
@@ -78,7 +79,7 @@ class WorkerModel extends Equatable {
     return WorkerModel(
       userId: map['userId'] as String,
       name: map['name'] as String,
-      age: map['age'] != null ? map['age'] as num : null,
+      age: map['age'] != null ? map['age'] as int : null,
       available: map['available'] as bool,
       avatar: map['avatar'] as String,
       email: map['email'] as String,
@@ -86,7 +87,7 @@ class WorkerModel extends Equatable {
       location: LocationModel.fromMap(map['location'] as Map<String,dynamic>),
       phone: map['phone'] as String,
       pincode: map['pincode'] as String,
-      subservices: List<String>.from((map['subservices'] as List<String>),)
+      subservices: List<String>.from((map['subservices'] as List<String>),),
     );
   }
 

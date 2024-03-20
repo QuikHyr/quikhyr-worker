@@ -6,13 +6,35 @@ import 'package:quikhyr_worker/models/worker_model.dart';
 part 'worker_state.dart';
 
 class WorkerCubit extends Cubit<WorkerState> {
-  WorkerCubit() : super(WorkerInitial());
+  WorkerModel worker;
+  WorkerCubit(this.worker) : super(WorkerInitial());
 
-  void createWorker(String userId, String name, bool available, String avatar, String email, String gender, LocationModel location, String phone, String pincode, List<String> subservices) {
+  void createWorker(
+      DateTime dob,
+      String userId,
+      String name,
+      String avatar,
+      String email,
+      String gender,
+      LocationModel location,
+      String phone,
+      String pincode,
+      List<String> subservices) {
+    int calculateAge(DateTime dob) {
+      final now = DateTime.now();
+      int age = now.year - dob.year;
+      if (now.month < dob.month ||
+          (now.month == dob.month && now.day < dob.day)) {
+        age--;
+      }
+      return age;
+    }
+
     final worker = WorkerModel(
       userId: userId,
       name: name,
-      available: available,
+      age: calculateAge(dob),
+      available: false,
       avatar: avatar,
       email: email,
       gender: gender,
@@ -23,4 +45,15 @@ class WorkerCubit extends Cubit<WorkerState> {
     );
     emit(WorkerLoaded(worker: worker));
   }
+
+  void updateLocation(LocationModel newLocation) {
+    final updatedWorker = worker.copyWith(location: newLocation);
+    emit(WorkerLoaded(worker: updatedWorker));
+  }
+
+  void updatePhone(String newPhone) {
+    final updatedWorker = worker.copyWith(phone: newPhone);
+    emit(WorkerLoaded(worker: updatedWorker));
+  }
+  
 }
