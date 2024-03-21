@@ -1,12 +1,12 @@
-part of 'worker_cubit.dart';
+// part of 'worker_cubit.dart';
 
-@immutable
-sealed class WorkerState {}
+// @immutable
+// sealed class WorkerState {}
 
-final class WorkerInitial extends WorkerState {}
+// final class WorkerInitial extends WorkerState {}
 
-final class WorkerLoaded extends WorkerState {
-  final WorkerModel worker;
+// final class WorkerLoaded extends WorkerState {
+//   final WorkerModel worker;
 
-  WorkerLoaded({required this.worker});
-}
+//   WorkerLoaded({required this.worker});
+// }

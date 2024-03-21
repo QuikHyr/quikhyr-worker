@@ -2,6 +2,7 @@ import 'dart:developer';
 
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quikhyr_worker/models/worker_model.dart';
 // import 'package:quikhyr_worker/models/worker_model.dart';
 
 class FirebaseUserRepo {
@@ -28,10 +29,26 @@ class FirebaseUserRepo {
     }
   }
 
-  Future<void> signUpWithEmailAndPassword(String email, String password) async {
+  Future<WorkerModel> signUp(WorkerModel workerModel, String password) async {
+  try {
+    UserCredential userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: workerModel.email, 
+      password: password
+    );
+
+    WorkerModel newUser = workerModel.copyWith(
+      id: userCredential.user!.uid,
+    );
+
+    return newUser;
+  } catch (e) {
+    log(e.toString());
+    rethrow;
+  }
+}
+  Future<void> setUserData(WorkerModel user) async {
     try {
-      _firebaseAuth.createUserWithEmailAndPassword(
-          email: email, password: password);
+      // await usersCollection.doc(user.id).set(user.toMap());
     } catch (e) {
       log(e.toString());
       rethrow;

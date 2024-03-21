@@ -6,7 +6,7 @@ import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 
 class WorkerModel extends Equatable {
-  final String userId;
+  final String id;
   final String name;
   final int? age;
   final bool available;
@@ -18,7 +18,7 @@ class WorkerModel extends Equatable {
   final String pincode;
   final List<String> subservices;
   const WorkerModel({
-    required this.userId,
+    required this.id,
     required this.name,
     this.age,
     required this.available,
@@ -32,7 +32,7 @@ class WorkerModel extends Equatable {
   });
 
   WorkerModel copyWith({
-    String? userId,
+    String? id,
     String? name,
     int? age,
     bool? available,
@@ -45,7 +45,7 @@ class WorkerModel extends Equatable {
     List<String>? subservices,
   }) {
     return WorkerModel(
-      userId: userId ?? this.userId,
+      id: id ?? this.id,
       name: name ?? this.name,
       age: age ?? this.age,
       available: available ?? this.available,
@@ -61,7 +61,7 @@ class WorkerModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'userId': userId,
+      'id': id,
       'name': name,
       'age': age,
       'available': available,
@@ -77,7 +77,7 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
-      userId: map['userId'] as String,
+      id: map['id'] as String,
       name: map['name'] as String,
       age: map['age'] != null ? map['age'] as int : null,
       available: map['available'] as bool,
@@ -101,7 +101,7 @@ class WorkerModel extends Equatable {
   @override
   List<Object?> get props {
     return [
-      userId,
+      id,
       name,
       age,
       available,

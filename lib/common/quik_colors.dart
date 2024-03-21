@@ -2,7 +2,7 @@ import 'dart:ui';
 
 const Color background = Color(0xFF000307);
 const Color onBackground = Color(0xFFFFFFFF);
-const Color primary = Color(0xFF297AA3);
+const Color primary = Color(0xFFe4b61a);
 const Color onPrimary = Color(0xFFFFFFFF);
 const Color secondary = Color(0xFFFAFFFF);
 const Color onSecondary = Color(0xFF000307);

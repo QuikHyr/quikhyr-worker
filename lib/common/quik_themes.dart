@@ -131,7 +131,6 @@ const TextStyle chatTrailingInactive = TextStyle(
   height: 1.0,
 );
 
-//same as above but with different color
 const TextStyle availabilityTextStyle = TextStyle(
   color: quikHyrBlue,
   fontFamily: 'Trap',

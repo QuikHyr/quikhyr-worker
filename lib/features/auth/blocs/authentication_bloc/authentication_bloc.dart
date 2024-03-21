@@ -8,28 +8,27 @@ import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc
+    extends Bloc<AuthenticationEvent, AuthenticationState> {
   final FirebaseUserRepo userRepository;
   late final StreamSubscription<User?> _userSubscription;
 
-  AuthenticationBloc(
-    {required this.userRepository}
-  ) : super(const AuthenticationState.unknown()) {
-    _userSubscription = userRepository.user.listen((user){
+  AuthenticationBloc({required this.userRepository})
+      : super(const AuthenticationState.unknown()) {
+    _userSubscription = userRepository.user.listen((user) {
       add(AuthenticationUserChanged(user));
     });
-    on<AuthenticationUserChanged>((event, emit){
-      if(event.user != null){
+    on<AuthenticationUserChanged>((event, emit) {
+      if (event.user != null) {
         emit(AuthenticationState.authenticated(event.user!));
-      }
-      else{
+      } else {
         emit(const AuthenticationState.unauthenticated());
       }
     });
   }
 
   @override
-  Future<void> close(){
+  Future<void> close() {
     _userSubscription.cancel();
     return super.close();
   }

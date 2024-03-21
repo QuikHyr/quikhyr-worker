@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:quikhyr_worker/features/booking/presentation/screens/booking_screen.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_conversation_screen.dart';
@@ -21,7 +22,8 @@ class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorHomeKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellHome');
-  static final _shellNavigatorFeedbackKey = GlobalKey<NavigatorState>(debugLabel: 'shellFeedback');
+  static final _shellNavigatorFeedbackKey =
+      GlobalKey<NavigatorState>(debugLabel: 'shellFeedback');
   static final _shellNavigatorChatKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellChat');
   static final _shellNavigatorBookKey =
@@ -56,7 +58,11 @@ class AppRouter {
                   return MainWrapper(
                     navigationShell: navigationShell,
                   );
-                } else {
+                } else if (authState.status ==
+                    AuthenticationStatus.authenticated) {
+                  return const SignUpScreen();
+                }
+                else {
                   return const WelcomeScreen();
                 }
               },
@@ -77,12 +83,9 @@ class AppRouter {
                     },
                     routes: [
                       GoRoute(
-                        path:
-                            QuikRoutes.homeDetailsPath,
+                        path: QuikRoutes.homeDetailsPath,
                         name: QuikRoutes.homeDetailsName,
-
                         pageBuilder: (context, state) {
-                          
                           return CustomTransitionPage<void>(
                               transitionsBuilder: (context, animation,
                                   secondaryAnimation, child) {
@@ -97,9 +100,9 @@ class AppRouter {
                                 );
                               },
                               child: HomeDetailScreen(
-                                  // serviceModel: serviceModel,
-                                  key: state.pageKey,
-                                  ));
+                                // serviceModel: serviceModel,
+                                key: state.pageKey,
+                              ));
                         },
                       ),
                     ],

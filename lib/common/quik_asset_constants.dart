@@ -1,6 +1,6 @@
 class QuikAssetConstants {
   static const String placeholderImage =
-      "gs://quikhyr-app.appspot.com/assets/avatar_placeholder.png";
+      "https://firebasestorage.googleapis.com/v0/b/quikhyr-app.appspot.com/o/assets%2Favatar_placeholder.png?alt=media&token=6f22f53a-d775-4691-b1ba-1fa31e6cf1ec";
   static const String rightArrowSvg = 'assets/icons/right_arrow.svg';
   static const String logoSvg = 'assets/icons/logo.svg';
   static const String welcomeBackground =
