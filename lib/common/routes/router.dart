@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:quikhyr_worker/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:quikhyr_worker/features/booking/presentation/screens/booking_screen.dart';
@@ -49,7 +50,7 @@ class AppRouter {
 
       StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
-            return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+             return BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, authState) {
                 if (authState.status == AuthenticationStatus.authenticated) {
                   // debugPrint("Going to Main Wrapper");
@@ -67,6 +68,30 @@ class AppRouter {
                 }
               },
             );
+          
+            // return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            //   builder: (context, authState) {
+            //     return BlocBuilder<SignUpBloc, SignUpState>(
+            //         builder: (context, signUpState) {
+            //       if (authState.status == AuthenticationStatus.authenticated &&
+            //           signUpState is SignUpSuccess) {
+            //         debugPrint(
+            //             navigationShell.shellRouteContext.route.toString());
+            //         return MainWrapper(
+            //           navigationShell: navigationShell,
+            //         );
+            //       } else if (authState.status ==
+            //           AuthenticationStatus.unauthenticated) {
+            //         return const SignUpScreen();
+            //       } else if (authState.status ==
+            //           AuthenticationStatus.authenticated) {
+            //         return const SignUpScreen();
+            //       } else {
+            //         return const WelcomeScreen();
+            //       }
+            //     });
+            //   },
+            // );
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(

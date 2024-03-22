@@ -22,19 +22,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: PageView(
-        physics: const NeverScrollableScrollPhysics(),
-        controller: pageController,
-        children: [
-          buildSignUp(),
-          buildSetPassword(),
-          buildProfileInfo(),
-        ],
-        // onPageChanged: (num) {
-        //   setState(() {
-        //     _curr = num;
-        //   });
-        // },
+      body: BlocListener<SignUpBloc, SignUpState>(
+        listener: (context, state) {
+          if(state is SignUpFailure){
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+              ),
+            );
+          }
+        },
+        child: PageView(
+          physics: const NeverScrollableScrollPhysics(),
+          controller: pageController,
+          children: [
+            buildSignUp(),
+            buildSetPassword(),
+            buildProfileInfo(),
+          ],
+          // onPageChanged: (num) {
+          //   setState(() {
+          //     _curr = num;
+          //   });
+          // },
+        ),
       ),
     );
   }
@@ -80,9 +91,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
               latitude: "70",
               longitude: "80",
             ),
-            pincode: '', subservices: const [
-              "je;lwgj;eg","hegekg;weg"
-            ], // Set age
+            pincode: '',
+            subservices: const ["je;lwgj;eg", "hegekg;weg"], // Set age
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));
@@ -396,7 +406,8 @@ class Pages extends StatelessWidget {
   final GlobalKey<FormState> formKey;
 
   const Pages(
-      {super.key, required this.color,
+      {super.key,
+      required this.color,
       required this.buttonText,
       required this.children,
       required this.pageController,

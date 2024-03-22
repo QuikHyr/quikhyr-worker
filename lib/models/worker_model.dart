@@ -84,16 +84,24 @@ class WorkerModel extends Equatable {
       avatar: map['avatar'] as String,
       email: map['email'] as String,
       gender: map['gender'] as String,
-      location: LocationModel.fromMap(map['location'] as Map<String,dynamic>),
+      location: LocationModel.fromMap(map['location'] as Map<String, dynamic>),
       phone: map['phone'] as String,
       pincode: map['pincode'] as String,
-      subservices: List<String>.from((map['subservices'] as List<String>),),
+      subservices: List<String>.from(
+        (map['subservices'] as List<String>),
+      ),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory WorkerModel.fromJson(String source) => WorkerModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory WorkerModel.fromJson(String source) =>
+      WorkerModel.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  @override
+  String toString() {
+    return 'WorkerModel{id: $id, name: $name, age: $age, available: $available, avatar: $avatar, email: $email, gender: $gender, location: $location, phone: $phone, pincode: $pincode, subservices: $subservices}';
+  }
 
   @override
   bool get stringify => true;
