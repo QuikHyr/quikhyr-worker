@@ -6,16 +6,18 @@ part 'sign_up_event.dart';
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
+  // final WorkerCubit workerCubit;
   final FirebaseUserRepo _workerRepository;
 
-  SignUpBloc({required FirebaseUserRepo userRepository})
+  SignUpBloc( {
+    // required this.workerCubit,
+  required FirebaseUserRepo userRepository})
       : _workerRepository = userRepository,
         super(SignUpInitial()) {
     on<SignUpRequired>((event, emit) async {
       emit(SignUpProcess());
       try {
-        await _workerRepository.signUp(
-            event.worker, event.password);
+        await _workerRepository.signUp(event.worker, event.password);
         emit(SignUpSuccess());
       } catch (e) {
         emit(SignUpFailure(e.toString()));

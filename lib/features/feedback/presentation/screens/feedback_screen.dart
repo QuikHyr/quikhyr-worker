@@ -3,8 +3,8 @@ import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 
-class ExploreScreen extends StatelessWidget {
-  const ExploreScreen({super.key});
+class FeedbackScreen extends StatelessWidget {
+  const FeedbackScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +34,7 @@ class ExploreScreen extends StatelessWidget {
                               TextStyle(fontFamily: 'Moonhouse', fontSize: 24),
                         ),
                         TextSpan(
-                          text: 'Explore',
+                          text: 'Feedback',
                           style: TextStyle(
                               fontFamily: 'Trap',
                               fontSize: 24,
@@ -56,6 +56,6 @@ class ExploreScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: const Center(child: Text("Explore")));
+        body: const Center(child: Text("Feedback")));
   }
 }

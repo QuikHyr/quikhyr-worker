@@ -1,19 +1,15 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:quikhyr_worker/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:quikhyr_worker/features/booking/presentation/screens/booking_screen.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_conversation_screen.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_screen.dart';
-import 'package:quikhyr_worker/features/explore/blocs/cubit/filter_chip_cubit.dart';
-import 'package:quikhyr_worker/features/explore/presentation/screens/explore_screen.dart';
+import 'package:quikhyr_worker/features/feedback/presentation/screens/feedback_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home/home_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home_detail/home_detail_screen.dart';
 import 'package:quikhyr_worker/features/settings/presentation/screens/settings_screen.dart';
@@ -23,12 +19,13 @@ class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorHomeKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellHome');
-  static final _shellNavigatorFeedbackKey =
-      GlobalKey<NavigatorState>(debugLabel: 'shellFeedback');
+
   static final _shellNavigatorChatKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellChat');
   static final _shellNavigatorBookKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellBook');
+  static final _shellNavigatorFeedbackKey =
+      GlobalKey<NavigatorState>(debugLabel: 'shellFeedback');
   static final _shellNavigatorSettingsKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellSettings');
   static final GoRouter _router = GoRouter(
@@ -50,7 +47,7 @@ class AppRouter {
 
       StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
-             return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+            return BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, authState) {
                 if (authState.status == AuthenticationStatus.authenticated) {
                   // debugPrint("Going to Main Wrapper");
@@ -62,13 +59,12 @@ class AppRouter {
                 } else if (authState.status ==
                     AuthenticationStatus.authenticated) {
                   return const SignUpScreen();
-                }
-                else {
+                } else {
                   return const WelcomeScreen();
                 }
               },
             );
-          
+
             // return BlocBuilder<AuthenticationBloc, AuthenticationState>(
             //   builder: (context, authState) {
             //     return BlocBuilder<SignUpBloc, SignUpState>(
@@ -134,24 +130,6 @@ class AppRouter {
                   ),
                 ]),
             StatefulShellBranch(
-              navigatorKey: _shellNavigatorFeedbackKey,
-              routes: <RouteBase>[
-                GoRoute(
-                  path: QuikRoutes.feedbackPath,
-                  name: QuikRoutes.feedbackName,
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    //ADD FILTERCHIP PROVIDER TO TRY OUT NOT PUTTING ALL BLOCS IN MAIN FILE
-                    child: BlocProvider(
-                      create: (context) => FilterChipCubit(),
-                      child: ExploreScreen(
-                        key: state.pageKey,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            StatefulShellBranch(
               navigatorKey: _shellNavigatorChatKey,
               routes: <RouteBase>[
                 GoRoute(
@@ -191,6 +169,21 @@ class AppRouter {
                   name: QuikRoutes.bookingName,
                   pageBuilder: (context, state) => NoTransitionPage(
                     child: BookingScreen(key: state.pageKey),
+                  ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              navigatorKey: _shellNavigatorFeedbackKey,
+              routes: <RouteBase>[
+                GoRoute(
+                  path: QuikRoutes.feedbackPath,
+                  name: QuikRoutes.feedbackName,
+                  pageBuilder: (context, state) => NoTransitionPage(
+                    //ADD FILTERCHIP PROVIDER TO TRY OUT NOT PUTTING ALL BLOCS IN MAIN FILE
+                    child: FeedbackScreen(
+                      key: state.pageKey,
+                    ),
                   ),
                 ),
               ],

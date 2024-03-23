@@ -88,11 +88,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
             age: age,
             available: false,
             location: LocationModel(
-              latitude: "70",
-              longitude: "80",
+              latitude: "10.353987",
+              longitude: "76.210751",
             ),
             pincode: '',
-            subservices: const ["je;lwgj;eg", "hegekg;weg"], // Set age
+            subservices: const ["ZbpkeckdBSht7GOR1T9y"],
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));

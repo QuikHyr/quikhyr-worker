@@ -87,9 +87,7 @@ class WorkerModel extends Equatable {
       location: LocationModel.fromMap(map['location'] as Map<String, dynamic>),
       phone: map['phone'] as String,
       pincode: map['pincode'] as String,
-      subservices: List<String>.from(
-        (map['subservices'] as List<String>),
-      ),
+subservices: (map['subservices'] as List).map((item) => item as String).toList(),
     );
   }
 

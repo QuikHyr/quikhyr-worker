@@ -46,22 +46,6 @@ class _MainWrapperState extends State<MainWrapper> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            QuikAssetConstants.exploreNavBarActiveSvg,
-          ),
-          QuikSpacing.hS2(),
-          Text("Explore", style: ThemeData.dark().textTheme.bodyLarge),
-        ],
-      ),
-      icon: SvgPicture.asset(
-        QuikAssetConstants.exploreNavBarSvg,
-      ),
-      label: 'Explore',
-    ),
-    NamedNavigationBarItemWidget(
-      activeIcon: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
             QuikAssetConstants.chatNavBarActiveSvg,
           ),
           QuikSpacing.hS2(),
@@ -88,6 +72,25 @@ class _MainWrapperState extends State<MainWrapper> {
         QuikAssetConstants.bookNavBarSvg,
       ),
       label: 'Bookmark',
+    ),
+    NamedNavigationBarItemWidget(
+      activeIcon: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            QuikAssetConstants.feedbackActiveSvg,
+          ),
+          QuikSpacing.hS2(),
+          Text(
+              overflow: TextOverflow.clip,
+              "Feedback",
+              style: ThemeData.dark().textTheme.bodyLarge),
+        ],
+      ),
+      icon: SvgPicture.asset(
+        QuikAssetConstants.feedbackSvg,
+      ),
+      label: 'Feedback',
     ),
     NamedNavigationBarItemWidget(
       activeIcon: Row(

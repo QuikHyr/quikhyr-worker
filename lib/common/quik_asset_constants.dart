@@ -1,4 +1,6 @@
 class QuikAssetConstants {
+  static const String feedbackSvg = 'assets/icons/feedback.svg';
+  static const String feedbackActiveSvg = 'assets/icons/feedback_active.svg';
   static const String placeholderImage =
       "https://firebasestorage.googleapis.com/v0/b/quikhyr-app.appspot.com/o/assets%2Favatar_placeholder.png?alt=media&token=6f22f53a-d775-4691-b1ba-1fa31e6cf1ec";
   static const String rightArrowSvg = 'assets/icons/right_arrow.svg';
