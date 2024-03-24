@@ -14,15 +14,20 @@ class FirebaseProvider extends ChangeNotifier {
   List<ClientModel> search = [];
 
   List<ClientModel> getAllClients() {
-    FirebaseFirestore.instance
-        .collection('clients')
-        .snapshots(includeMetadataChanges: true)
-        .listen((users) {
-      this.users = users.docs
-          .map((doc) => ClientModel.fromMap(doc.data()))
-          .toList();
-      notifyListeners();
-    });
+    try {
+      FirebaseFirestore.instance
+          .collection('clients')
+          .snapshots(includeMetadataChanges: true)
+          .listen((users) {
+        this.users = users.docs.map((doc) {
+          debugPrint(doc.data().toString());
+          return ClientModel.fromMap(doc.data());
+        }).toList();
+        notifyListeners();
+      });
+    } catch (e) {
+      print('Error fetching clients: $e');
+    }
     return users;
   }
 
@@ -58,17 +63,14 @@ class FirebaseProvider extends ChangeNotifier {
     return messages;
   }
 
-  void scrollDown() =>
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+  void scrollDown() => WidgetsBinding.instance.addPostFrameCallback((_) {
         if (scrollController.hasClients) {
-          scrollController.jumpTo(
-              scrollController.position.maxScrollExtent);
+          scrollController.jumpTo(scrollController.position.maxScrollExtent);
         }
       });
 
   Future<void> searchUser(String name) async {
-    search =
-        await FirebaseFirestoreService.searchUser(name);
+    search = await FirebaseFirestoreService.searchUser(name);
     notifyListeners();
   }
 }
