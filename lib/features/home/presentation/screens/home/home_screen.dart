@@ -117,7 +117,11 @@ class HomeScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Text(
-                          "Subservices: ${state.worker.subservices}",
+                          "Subservices: ${state.worker.subserviceIds}",
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        Text(
+                          "Services: ${state.worker.serviceIds}",
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ],

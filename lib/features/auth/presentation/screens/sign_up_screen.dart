@@ -92,7 +92,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               longitude: 76.210751,
             ),
             pincode: '',
-            subservices: const ["ZbpkeckdBSht7GOR1T9y"],
+            fcmToken: '', isVerified: true, isActive: true, lastOnline: DateTime.now(), subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"], serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));
