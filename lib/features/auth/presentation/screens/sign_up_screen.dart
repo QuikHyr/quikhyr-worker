@@ -88,8 +88,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             age: age,
             available: false,
             location: LocationModel(
-              latitude: "10.353987",
-              longitude: "76.210751",
+              latitude: 10.353987,
+              longitude: 76.210751,
             ),
             pincode: '',
             subservices: const ["ZbpkeckdBSht7GOR1T9y"],

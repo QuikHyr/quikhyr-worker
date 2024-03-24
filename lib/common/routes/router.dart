@@ -14,6 +14,7 @@ import 'package:quikhyr_worker/features/home/presentation/screens/home/home_scre
 import 'package:quikhyr_worker/features/home/presentation/screens/home_detail/home_detail_screen.dart';
 import 'package:quikhyr_worker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:quikhyr_worker/main_wrapper.dart';
+import 'package:quikhyr_worker/models/client_model.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -145,7 +146,9 @@ class AppRouter {
                         pageBuilder: (context, state) =>
                             CustomTransitionPage<void>(
                           // key: state.pageKey,
-                          child: const ChatConversationScreen(),
+                          child: ChatConversationScreen(
+                            client: state.extra as ClientModel,
+                          ),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) =>
                                   SlideTransition(

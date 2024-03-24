@@ -2,8 +2,8 @@
 import 'dart:convert';
 
 class LocationModel {
-  final String latitude;
-  final String longitude;
+  final num latitude;
+  final num longitude;
 
   LocationModel({
     required this.latitude,
@@ -15,8 +15,8 @@ class LocationModel {
     String? longitude,
   }) {
     return LocationModel(
-      latitude: latitude ?? this.latitude,
-      longitude: longitude ?? this.longitude,
+      latitude: latitude as num,
+      longitude: longitude as num,
     );
   }
 
@@ -29,8 +29,8 @@ class LocationModel {
 
   factory LocationModel.fromMap(Map<String, dynamic> map) {
     return LocationModel(
-      latitude: map['latitude'] as String,
-      longitude: map['longitude'] as String,
+      latitude: map['latitude'] as num,
+      longitude: map['longitude'] as num,
     );
   }
 

@@ -1,19 +1,32 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
+import 'package:quikhyr_worker/common/widgets/gradient_separator.dart';
 import 'package:quikhyr_worker/common/widgets/quik_search_bar.dart';
+import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
+import 'package:quikhyr_worker/features/chat/presentation/components/user_item.dart';
 
-class Message {
-  final String sender;
-  final String message;
-
-  Message(this.sender, this.message);
-}
-
-class ChatScreen extends StatelessWidget {
+class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
 
+  @override
+  State<ChatScreen> createState() => _ChatScreenState();
+}
+
+class _ChatScreenState extends State<ChatScreen> {
+  @override
+  void initState() {
+    Provider.of<FirebaseProvider>(context, listen: false).getAllClients();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +82,8 @@ class ChatScreen extends StatelessWidget {
             ),
           ),
         ),
-        body: Padding(
+        body: Consumer<FirebaseProvider>(builder: (context, value, child) {
+          return Padding(
             padding:
                 const EdgeInsets.only(left: 24, right: 24, top: 24, bottom: 0),
             child: Column(children: [
@@ -82,28 +96,159 @@ class ChatScreen extends StatelessWidget {
               ),
               QuikSpacing.vS24(),
               Expanded(
-                child: ListView.builder(
-                  itemCount: 10, // Placeholder data
-                  itemBuilder: (context, index) {
-                    // Placeholder data
-                    String senderName = 'John Doe';
-                    String lastMessage = 'Hello!';
-                    DateTime timestamp = DateTime.now();
+                  child: ListView.separated(
+                separatorBuilder: (context, index) => const GradientSeparator(),
+                itemBuilder: (context, index) {
+                  return value.users[index].id !=
+                          FirebaseAuth.instance.currentUser?.uid
+                      ? UserItem(
+                          client: value.users.elementAt(index),
+                        )
+                      : const SizedBox();
+                },
+                itemCount: value.users.length,
+              )),
 
-                    return Column(
-                      children: [
-                        ListTile(
-                          title: Text(senderName),
-                          subtitle: Text(lastMessage),
-                          trailing: Text(timestamp.toString()),
-                        ),
-                        Divider(),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ]))
-        );
+              // Expanded(
+              //   child: ListView(
+              //     shrinkWrap: true,
+              //     children: [
+              // ListTile(
+              //   contentPadding: EdgeInsets.zero,
+              //   leading: Container(
+              //     decoration: const BoxDecoration(
+              //       shape: BoxShape.circle,
+              //       color: gridItemBackgroundColor,
+              //     ),
+              //     alignment: Alignment.center,
+              //     height: 64,
+              //     width: 64,
+              //     child: Stack(
+              //       children: [
+              //         const Positioned.fill(
+              //             child: CircleAvatar(
+              //           backgroundImage: AssetImage(
+              //             "assets/images/ratedWorker2.png",
+              //           ),
+              //         )),
+              //         // if (state.workers[index].isVerified)
+              //         Positioned(
+              //           top: 0,
+              //           right: 0,
+              //           child: SvgPicture.asset(
+              //             QuikAssetConstants.verifiedBlueSvg,
+              //           ),
+              //         ),
+              //         Positioned(
+              //             bottom: 0,
+              //             left: 4,
+              //             child: SvgPicture.asset(
+              //                 QuikAssetConstants.chatGreenBubbleSvg)),
+              //       ],
+              //     ),
+              //   ),
+              //   title: Text("Kenny Kirk",
+              //       style: Theme.of(context).textTheme.headlineSmall),
+              //   subtitle: const Text("Will meet you tomorrow.",
+              //       style: chatSubTitle),
+              //   trailing: const Text(
+              //     "7:04 pm",
+              //     style: chatTrailingActive,
+              //   ),
+              //   onTap: () =>
+              //       context.pushNamed(Routes.chatConversationNamedPageName),
+              // ),
+              // const GradientSeparator(),
+              //       ListTile(
+              //         contentPadding: EdgeInsets.zero,
+              //         leading: Container(
+              //           decoration: const BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: gridItemBackgroundColor,
+              //           ),
+              //           alignment: Alignment.center,
+              //           height: 64,
+              //           width: 64,
+              //           child: Stack(
+              //             children: [
+              //               const Positioned.fill(
+              //                   child: CircleAvatar(
+              //                 backgroundImage: AssetImage(
+              //                   "assets/images/ratedWorker3.png",
+              //                 ),
+              //               )),
+              //               // if (state.workers[index].isVerified)
+              //               Positioned(
+              //                 top: 0,
+              //                 right: 0,
+              //                 child: SvgPicture.asset(
+              //                   QuikAssetConstants.verifiedBlueSvg,
+              //                 ),
+              //               ),
+              //               Positioned(
+              //                   bottom: 0,
+              //                   left: 4,
+              //                   child: SvgPicture.asset(
+              //                       QuikAssetConstants.chatGreyBubbleSvg)),
+              //             ],
+              //           ),
+              //         ),
+              //         title: Text("Henry Kal",
+              //             style: Theme.of(context).textTheme.headlineSmall),
+              //         subtitle: const Text("Payment has been transferred.",
+              //             overflow: TextOverflow.ellipsis,
+              //             style: chatSubTitleRead),
+              //         trailing: const Text(
+              //           "Yesterday",
+              //           style: chatTrailingInactive,
+              //         ),
+              //       ),
+              //       const GradientSeparator(),
+              //       ListTile(
+              //         contentPadding: EdgeInsets.zero,
+              //         leading: Container(
+              //           decoration: const BoxDecoration(
+              //             shape: BoxShape.circle,
+              //             color: gridItemBackgroundColor,
+              //           ),
+              //           alignment: Alignment.center,
+              //           height: 64,
+              //           width: 64,
+              //           child: Stack(
+              //             children: [
+              //               const Positioned.fill(
+              //                   child: CircleAvatar(
+              //                 backgroundImage: AssetImage(
+              //                   "assets/images/ratedWorker1.png",
+              //                 ),
+              //               )),
+              //               // if (state.workers[index].isVerified)
+              //               Positioned(
+              //                 top: 0,
+              //                 right: 0,
+              //                 child: SvgPicture.asset(
+              //                   QuikAssetConstants.verifiedBlueSvg,
+              //                 ),
+              //               ),
+              //               Positioned(
+              //                   bottom: 0,
+              //                   left: 4,
+              //                   child: SvgPicture.asset(
+              //                       QuikAssetConstants.chatGreyBubbleSvg)),
+              //             ],
+              //           ),
+              //         ),
+              //         title: Text("John Burke",
+              //             style: Theme.of(context).textTheme.headlineSmall),
+              //         subtitle: const Text("Thank you for choosing me.",
+              //             style: chatSubTitle),
+              //         trailing: const Text("29/02/24", style: chatTrailingActive),
+              //       ),
+              //     ],
+              //   ),
+              // )
+            ]),
+          );
+        }));
   }
 }

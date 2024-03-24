@@ -76,6 +76,10 @@ class HomeScreen extends StatelessWidget {
                     return Column(
                       children: [
                         Text(
+                          state.worker.id,
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        Text(
                           state.worker.name,
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
@@ -113,7 +117,7 @@ class HomeScreen extends StatelessWidget {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         Text(
-                          state.worker.subservices.toString(),
+                          "Subservices: ${state.worker.subservices}",
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                       ],
