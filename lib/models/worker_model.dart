@@ -84,6 +84,10 @@ class WorkerModel extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
+      'fcmToken': fcmToken,
+      'isVerified': isVerified,
+      'isActive': isActive,
+      'lastOnline': lastOnline.toIso8601String(),
       'name': name,
       'age': age,
       'available': available,
@@ -100,6 +104,7 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
+
       fcmToken: map['fcmToken'] as String,
       isVerified: map['isVerified'] as bool,
       isActive: map['isActive'] as bool,

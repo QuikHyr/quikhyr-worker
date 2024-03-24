@@ -44,8 +44,10 @@ class MyApp extends StatelessWidget {
             return WorkerBloc(workerRepository: workerRepo, firebaseUserRepo: firebaseUserRepo)..add(FetchWorker());
           }),
         ],
-        child: ChangeNotifierProvider(create: (_) => FirebaseProvider(),child: const MyAppView()),
-      ),
+        // child: ChangeNotifierProvider(create: (_) => FirebaseProvider(),child: const MyAppView()),
+        child: MyAppView()),
+
+      
     );
   }
 }
