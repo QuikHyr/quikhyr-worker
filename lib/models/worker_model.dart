@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
@@ -13,7 +12,7 @@ class WorkerModel extends Equatable {
   final bool isVerified;
   final bool isActive;
   final DateTime lastOnline;
-  final int? age;
+  final num? age;
   final bool available;
   final String avatar;
   final String email;
@@ -23,7 +22,7 @@ class WorkerModel extends Equatable {
   final String pincode;
   final List<String> subserviceIds;
   final List<String> serviceIds;
-  
+
   const WorkerModel({
     required this.fcmToken,
     required this.isVerified,
@@ -50,7 +49,7 @@ class WorkerModel extends Equatable {
     DateTime? lastOnline,
     String? id,
     String? name,
-    int? age,
+    num? age,
     bool? available,
     String? avatar,
     String? email,
@@ -104,14 +103,18 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
-
       fcmToken: map['fcmToken'] as String,
       isVerified: map['isVerified'] as bool,
       isActive: map['isActive'] as bool,
-      lastOnline: (map['lastOnline'] as Timestamp).toDate(),
+      lastOnline: DateTime.fromMillisecondsSinceEpoch(
+        ((map['lastOnline'] as Map<String, dynamic>)['_seconds'] * 1000 +
+                (map['lastOnline'] as Map<String, dynamic>)['_nanoseconds'] /
+                    1000000)
+            .round(),
+      ),
       id: map['id'] as String,
       name: map['name'] as String,
-      age: map['age'] as int,
+      age: map['age'] as num,
       available: map['available'] as bool,
       avatar: map['avatar'] as String,
       email: map['email'] as String,
@@ -121,7 +124,8 @@ class WorkerModel extends Equatable {
       pincode: map['pincode'] as String,
       subserviceIds:
           (map['subserviceIds'] as List).map((item) => item as String).toList(),
-      serviceIds: (map['serviceIds'] as List).map((item) => item as String).toList(),
+      serviceIds:
+          (map['serviceIds'] as List).map((item) => item as String).toList(),
     );
   }
 
