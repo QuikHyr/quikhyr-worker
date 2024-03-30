@@ -20,7 +20,6 @@ class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorHomeKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellHome');
-
   static final _shellNavigatorChatKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellChat');
   static final _shellNavigatorBookKey =
@@ -105,6 +104,7 @@ class AppRouter {
                     },
                     routes: [
                       GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
                         path: QuikRoutes.homeDetailsPath,
                         name: QuikRoutes.homeDetailsName,
                         pageBuilder: (context, state) {
@@ -141,6 +141,7 @@ class AppRouter {
                         ),
                     routes: [
                       GoRoute(
+                        parentNavigatorKey: _rootNavigatorKey,
                         path: QuikRoutes.chatConversationPath,
                         name: QuikRoutes.chatConversationName,
                         pageBuilder: (context, state) =>

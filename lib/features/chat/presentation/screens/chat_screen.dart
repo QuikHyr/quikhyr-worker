@@ -102,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   return value.users[index].id !=
                           FirebaseAuth.instance.currentUser?.uid
                       ? UserItem(
-                          client: value.users.elementAt(index),
+                          worker: value.users.elementAt(index),
                         )
                       : const SizedBox();
                 },

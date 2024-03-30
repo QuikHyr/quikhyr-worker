@@ -6,12 +6,16 @@ class QuikRoutes {
   static const String chatConversationPath = 'chatConversation';
   static const String feedbackPath = '/feedback';
   static const String settingsPath = '/settings';
+  static const String registrationPath = '/registration';
+
 
   static const String homeName = 'Home';
+
   static const String homeDetailsName = 'HomeDetail';
   static const String bookingName = 'Booking';
   static const String chatName = 'Chat';
   static const String chatConversationName = 'ChatConversation';
   static const String feedbackName = 'Feedback';
   static const String settingsName = 'Settings';
+  static const String registrationName = 'Registration';
 }

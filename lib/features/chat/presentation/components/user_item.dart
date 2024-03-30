@@ -7,9 +7,9 @@ import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/models/client_model.dart';
 
 class UserItem extends StatefulWidget {
-  const UserItem({super.key, required this.client});
+  const UserItem({super.key, required this.worker});
 
-  final ClientModel client;
+  final ClientModel worker;
 
   @override
   State<UserItem> createState() => _UserItemState();
@@ -28,6 +28,7 @@ class _UserItemState extends State<UserItem> {
           children: [
             const Positioned.fill(
                 child: CircleAvatar(
+              backgroundColor: Colors.transparent,
               backgroundImage: NetworkImage(
                 QuikAssetConstants.placeholderImage,
               ),
@@ -47,16 +48,16 @@ class _UserItemState extends State<UserItem> {
           ],
         ),
       ),
-      title: Text(widget.client.name,
+      title: Text(widget.worker.name,
           style: Theme.of(context).textTheme.headlineSmall),
-      subtitle: Text(widget.client.id, style: chatSubTitle),
+      subtitle: Text(widget.worker.id, style: chatSubTitle),
       trailing: const Text(
         "7:04 pm",
         style: chatTrailingActive,
       ),
       onTap: () {
-        context.pushNamed(QuikRoutes.chatConversationName,
-            extra: widget.client);
+        GoRouter.of(context).pushNamed(QuikRoutes.chatConversationName,
+            extra: widget.worker);
       },
     );
   }

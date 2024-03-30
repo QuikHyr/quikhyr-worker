@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
+import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
@@ -123,6 +125,12 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           "Services: ${state.worker.serviceIds}",
                           style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            context.pushNamed(QuikRoutes.homeDetailsName);
+                          },
+                          child: const Text("Go To Home Detail"),
                         ),
                       ],
                     );

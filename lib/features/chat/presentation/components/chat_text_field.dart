@@ -46,9 +46,9 @@ class _ChatTextFieldState extends State<ChatTextField> {
             backgroundColor: primary,
             radius: 20,
             child: IconButton(
-                icon: const Icon(Icons.send, color: Colors.white),
+                icon: const Icon(Icons.camera_alt, color: Colors.white),
                 onPressed: () {
-                  _sendText(context);
+                  _sendImage();
                 }),
           ),
           const SizedBox(width: 5),
@@ -56,11 +56,12 @@ class _ChatTextFieldState extends State<ChatTextField> {
             backgroundColor: primary,
             radius: 20,
             child: IconButton(
-                icon: const Icon(Icons.camera_alt, color: Colors.white),
+                icon: const Icon(Icons.send, color: Colors.white),
                 onPressed: () {
-                  _sendImage();
+                  _sendText(context);
                 }),
           ),
+          
         ],
       );
 

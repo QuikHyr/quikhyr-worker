@@ -1,12 +1,11 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 
 class ClientModel extends Equatable {
+  final String? locationName;
   final String id;
   final String name;
   final String fcmToken;
@@ -20,6 +19,7 @@ class ClientModel extends Equatable {
   final String phone;
   final String pincode;
   const ClientModel({
+    this.locationName = "Initial Location",
     required this.id,
     required this.name,
     required this.fcmToken,
@@ -35,6 +35,7 @@ class ClientModel extends Equatable {
   });
 
   ClientModel copyWith({
+    String? locationName,
     String? id,
     String? name,
     String? fcmToken,
@@ -49,6 +50,7 @@ class ClientModel extends Equatable {
     String? pincode,
   }) {
     return ClientModel(
+      locationName: locationName ?? this.locationName,
       id: id ?? this.id,
       name: name ?? this.name,
       fcmToken: fcmToken ?? this.fcmToken,
@@ -66,6 +68,7 @@ class ClientModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'locationName': locationName,
       'id': id,
       'name': name,
       'fcmToken': fcmToken,
@@ -83,6 +86,7 @@ class ClientModel extends Equatable {
 
   factory ClientModel.fromMap(Map<String, dynamic> map) {
     return ClientModel(
+      locationName: map['locationName'] != null ? map['locationName'] as String : 'Location not found',
       id: map['id'] as String,
       name: map['name'] as String,
       fcmToken: map['fcmToken'] as String,
@@ -92,7 +96,7 @@ class ClientModel extends Equatable {
       avatar: map['avatar'] as String,
       email: map['email'] as String,
       gender: map['gender'] as String,
-      location: LocationModel.fromMap(map['location'] as Map<String,dynamic>),
+      location: LocationModel.fromMap(map['location'] as Map<String, dynamic>),
       phone: map['phone'] as String,
       pincode: map['pincode'] as String,
     );
@@ -100,7 +104,8 @@ class ClientModel extends Equatable {
 
   String toJson() => json.encode(toMap());
 
-  factory ClientModel.fromJson(String source) => ClientModel.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory ClientModel.fromJson(String source) =>
+      ClientModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
@@ -108,6 +113,7 @@ class ClientModel extends Equatable {
   @override
   List<Object?> get props {
     return [
+      locationName,
       id,
       name,
       fcmToken,

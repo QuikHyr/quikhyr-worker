@@ -112,11 +112,13 @@ class _MainWrapperState extends State<MainWrapper> {
 
   @override
   Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
-    });
+    //!!RISKY CODE!!//
+    //!! NEED TO FIGURE OUR BETTER WAY TO PREVENT UNINTED BACK BUTTON ON INITIAL LOCATION
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   if (Navigator.canPop(context)) {
+    //     Navigator.pop(context);
+    //   }
+    // });
 
     return WillPopScope(
       onWillPop: () async {
