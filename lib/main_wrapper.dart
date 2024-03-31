@@ -122,25 +122,29 @@ class _MainWrapperState extends State<MainWrapper> {
 
     return WillPopScope(
       onWillPop: () async {
-        bool shouldClose = await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Confirmation'),
-            content: const Text('Are you sure you want to close the app?'),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('No'),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text('Yes'),
-              ),
-            ],
-          ),
-        );
-        return shouldClose;
-        //return shouldClose ?? false
+        if (GoRouter.of(context).canPop()) {
+          context.pop();
+          return false;
+        } else {
+          bool shouldClose = await showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Confirmation'),
+              content: const Text('Are you sure you want to close the app?'),
+              actions: [
+                TextButton(
+                  onPressed: () => context.pop(false),
+                  child: const Text('No'),
+                ),
+                TextButton(
+                  onPressed: () => context.pop(true),
+                  child: const Text('Yes'),
+                ),
+              ],
+            ),
+          );
+          return shouldClose;
+        }
       },
       child: Scaffold(
         body: widget.navigationShell,
@@ -158,10 +162,10 @@ class _MainWrapperState extends State<MainWrapper> {
             currentIndex: selectedIndex,
             type: BottomNavigationBarType.shifting,
             onTap: (index) {
+              _goToBranch(index);
               setState(() {
                 selectedIndex = index;
                 //if having lag move _goToBranch(index) to the bottom of the setState
-                _goToBranch(index);
               });
             },
           ),

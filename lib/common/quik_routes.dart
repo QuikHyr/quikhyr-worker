@@ -7,7 +7,9 @@ class QuikRoutes {
   static const String feedbackPath = '/feedback';
   static const String settingsPath = '/settings';
   static const String registrationPath = '/registration';
-
+  static const String signInPath = '/sign_in';
+  static const String signUpPath = '/sign_up';
+  static const String welcomePath = '/welcome';
 
   static const String homeName = 'Home';
 
@@ -18,4 +20,7 @@ class QuikRoutes {
   static const String feedbackName = 'Feedback';
   static const String settingsName = 'Settings';
   static const String registrationName = 'Registration';
+  static const String signInName = 'SignIn';
+  static const String signUpName = 'SignUp';
+  static const String welcomeName = 'Welcome';
 }

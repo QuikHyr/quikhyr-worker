@@ -1,7 +1,11 @@
+import 'dart:developer';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
+import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
@@ -19,32 +23,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final PageController pageController = PageController();
   // int _curr = 0;
   final TextEditingController _passwordController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: BlocListener<SignUpBloc, SignUpState>(
-        listener: (context, state) {
-          if(state is SignUpFailure){
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.message),
-              ),
-            );
-          }
-        },
-        child: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: pageController,
-          children: [
-            buildSignUp(),
-            buildSetPassword(),
-            buildProfileInfo(),
-          ],
-          // onPageChanged: (num) {
-          //   setState(() {
-          //     _curr = num;
-          //   });
-          // },
+    return WillPopScope(
+      onWillPop: () async {
+        if (pageController.page!.toInt() == 0) {
+          bool shouldClose = await showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: const Text('Confirmation'),
+                  content:
+                      const Text('Are you sure you want to close the app?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(false),
+                      child: const Text('No'),
+                    ),
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(true),
+                      child: const Text('Yes'),
+                    ),
+                  ],
+                ),
+              ) ??
+              false;
+          return shouldClose;
+        } else {
+          pageController.previousPage(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeIn);
+          return Future.value(false);
+        }
+      },
+      child: Scaffold(
+        body: BlocListener<SignUpBloc, SignUpState>(
+          listener: (context, state) {
+            if (state is SignUpFailure) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.message),
+                ),
+              );
+            }
+          },
+          child: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children: [
+              buildSignUp(),
+              buildSetPassword(),
+              buildProfileInfo(),
+            ],
+            // onPageChanged: (num) {
+            //   setState(() {
+            //     _curr = num;
+            //   });
+            // },
+          ),
         ),
       ),
     );
@@ -92,7 +128,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
               longitude: 76.210751,
             ),
             pincode: _pincodeController.text.trim(),
-            fcmToken: "testWorker1fcmToken", isVerified: false, isActive: false, subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"], serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
+            fcmToken: "testWorker1fcmToken",
+            isVerified: false,
+            isActive: false,
+            subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
+            serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));
@@ -215,15 +255,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
           validator: (value) {
             if (value == null || value.isEmpty) {
               return 'Please enter your pincode';
-            }
-            else if(value.length != 6){
+            } else if (value.length != 6) {
               return 'Pincode must be 6 digits';
             }
             return null;
           },
         ),
-        
-
       ],
     );
   }
@@ -475,19 +512,24 @@ class Pages extends StatelessWidget {
                   const SizedBox(
                     height: 20.0,
                   ),
-                  RichText(
-                    text: TextSpan(
-                      text: "Already have an account?",
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      children: [
-                        TextSpan(
-                          text: " Log in ",
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(fontWeight: FontWeight.w700),
-                        ),
-                      ],
+                  GestureDetector(
+                    onTap: () {
+                      context.goNamed(QuikRoutes.signInName);
+                    },
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Already have an account?",
+                        style: Theme.of(context).textTheme.bodyMedium,
+                        children: [
+                          TextSpan(
+                            text: " Log in ",
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(fontWeight: FontWeight.w700),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

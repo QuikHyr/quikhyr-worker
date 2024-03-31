@@ -68,7 +68,6 @@ class ClientModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'locationName': locationName,
       'id': id,
       'name': name,
       'fcmToken': fcmToken,

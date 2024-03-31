@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
+import 'package:quikhyr_worker/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
 import 'package:quikhyr_worker/features/booking/presentation/screens/booking_screen.dart';
@@ -50,15 +52,15 @@ class AppRouter {
             return BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, authState) {
                 if (authState.status == AuthenticationStatus.authenticated) {
-                  // debugPrint("Going to Main Wrapper");
+                  debugPrint("Going to Main Wrapper");
                   debugPrint(
                       navigationShell.shellRouteContext.route.toString());
                   return MainWrapper(
                     navigationShell: navigationShell,
                   );
                 } else if (authState.status ==
-                    AuthenticationStatus.authenticated) {
-                  return const SignUpScreen();
+                    AuthenticationStatus.unauthenticated) {
+                  return const WelcomeScreen();
                 } else {
                   return const WelcomeScreen();
                 }
@@ -104,7 +106,6 @@ class AppRouter {
                     },
                     routes: [
                       GoRoute(
-                        parentNavigatorKey: _rootNavigatorKey,
                         path: QuikRoutes.homeDetailsPath,
                         name: QuikRoutes.homeDetailsName,
                         pageBuilder: (context, state) {
@@ -204,7 +205,31 @@ class AppRouter {
                 ),
               ],
             ),
-          ])
+          ]),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: QuikRoutes.signUpPath,
+        name: QuikRoutes.signUpName,
+        builder: (context, state) {
+          return const SignUpScreen();
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: QuikRoutes.signInPath,
+        name: QuikRoutes.signInName,
+        builder: (context, state) {
+          return const SignInScreen();
+        },
+      ),
+       GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: QuikRoutes.welcomePath,
+        name: QuikRoutes.welcomeName,
+        builder: (context, state) {
+          return const WelcomeScreen();
+        },
+      ),
       //It is not necessary to provide a navigatorKey if it isn't also
       //needed elsewhere. If not provided, a default key will be used.
     ],

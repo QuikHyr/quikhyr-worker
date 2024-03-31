@@ -82,7 +82,6 @@ class WorkerModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'locationName': locationName,
       'id': id,
       'fcmToken': fcmToken,
       'isVerified': isVerified,
