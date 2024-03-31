@@ -4,7 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
+import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:quikhyr_worker/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
+import 'package:quikhyr_worker/features/auth/presentation/screens/registration_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
@@ -51,16 +53,19 @@ class AppRouter {
           builder: (context, state, navigationShell) {
             return BlocBuilder<AuthenticationBloc, AuthenticationState>(
               builder: (context, authState) {
-                if (authState.status == AuthenticationStatus.authenticated) {
+                final signUpState = context.read<SignUpBloc>().state;
+                print("Sign Up State is: $signUpState");
+                if (authState.status == AuthenticationStatus.authenticated || signUpState is RegistrationSuccess) {
                   debugPrint("Going to Main Wrapper");
                   debugPrint(
                       navigationShell.shellRouteContext.route.toString());
                   return MainWrapper(
                     navigationShell: navigationShell,
                   );
-                } else if (authState.status ==
-                    AuthenticationStatus.unauthenticated) {
-                  return const WelcomeScreen();
+                }
+                //!!REMOVE THE SIGNUPSTATE IS SIGNUPFAILURE CONDITION IF ANY ISSUE OCCURS
+                else if (signUpState is RegistrationFailure) {
+                  return const RegistrationScreen();
                 } else {
                   return const WelcomeScreen();
                 }
@@ -222,12 +227,20 @@ class AppRouter {
           return const SignInScreen();
         },
       ),
-       GoRoute(
+      GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: QuikRoutes.welcomePath,
         name: QuikRoutes.welcomeName,
         builder: (context, state) {
           return const WelcomeScreen();
+        },
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: QuikRoutes.registrationPath,
+        name: QuikRoutes.registrationName,
+        builder: (context, state) {
+          return const RegistrationScreen();
         },
       ),
       //It is not necessary to provide a navigatorKey if it isn't also

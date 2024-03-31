@@ -45,9 +45,7 @@ class FirebaseUserRepo {
       WorkerModel newUser = workerModel.copyWith(
         id: userCredential.user!.uid,
       );
-
-      await setUserData(newUser);
-
+      
       return newUser;
     } catch (e) {
       log(e.toString());

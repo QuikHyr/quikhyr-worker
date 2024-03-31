@@ -13,3 +13,10 @@ class SignUpRequired extends SignUpEvent {
 
   const SignUpRequired({required this.worker, required this.password});
 }
+
+
+class RegistrationRequired extends SignUpEvent {
+  final WorkerModel worker;
+
+  const RegistrationRequired({required this.worker});
+}

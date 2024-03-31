@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
 
             return SignInBloc(userRepository: userRepository);
           }),
-          BlocProvider<SignUpBloc>(create: (context) {
+          BlocProvider<SignUpBloc>(lazy: false,create: (context) {
             final userRepository = context.read<FirebaseUserRepo>();
 
             return SignUpBloc(userRepository: userRepository);

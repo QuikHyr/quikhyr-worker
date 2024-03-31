@@ -9,7 +9,13 @@ sealed class SignUpState extends Equatable {
 
 final class SignUpInitial extends SignUpState {}
 
-class SignUpSuccess extends SignUpState {}
+class SignUpSuccessWithWorker extends SignUpState {
+  final WorkerModel worker;
+  const SignUpSuccessWithWorker(this.worker);
+  
+  @override
+  List<Object> get props => [worker];
+}
 class SignUpFailure extends SignUpState {
   final String message;
   const SignUpFailure(this.message);
@@ -18,3 +24,15 @@ class SignUpFailure extends SignUpState {
   List<Object> get props => [message];
 }
 class SignUpProcess extends SignUpState {}
+
+final class RegistrationLoading extends SignUpState {}
+
+class RegistrationSuccess extends SignUpState {}
+
+class RegistrationFailure extends SignUpState {
+  final String message;
+  const RegistrationFailure(this.message);
+  
+  @override
+  List<Object> get props => [message];
+}
