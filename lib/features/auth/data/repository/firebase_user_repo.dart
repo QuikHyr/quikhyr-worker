@@ -40,7 +40,7 @@ class FirebaseUserRepo {
     }
   }
 
-  Future<WorkerModel> signUp(WorkerModel workerModel, String password) async {
+  Future<bool> signUp(WorkerModel workerModel, String password) async {
     try {
       UserCredential userCredential =
           await _firebaseAuth.createUserWithEmailAndPassword(
@@ -49,30 +49,38 @@ class FirebaseUserRepo {
       WorkerModel newUser = workerModel.copyWith(
         id: userCredential.user!.uid,
       );
-      
-      return newUser;
+
+      final result = await setUserData(newUser);
+
+      if (result is Left) {
+        await userCredential.user!.delete();
+        return false;
+      }
+
+      return true;
     } catch (e) {
       log(e.toString());
-      rethrow;
+      return false;
     }
   }
 
-  Future<void> setUserData(WorkerModel workerModel) async {
+  Future<bool> setUserData(WorkerModel workerModel) async {
     try {
       final result = await createWorker(workerModel);
-      result.fold(
+      return result.fold(
         (failure) {
           log('Failed to create worker: $failure');
-          throw Exception(failure);
+          return false;
         },
         (worker) {
           log('Successfully created worker: ${worker.id}');
           log('Successfully created worker: $workerModel');
+          return true;
         },
       );
     } catch (e) {
       log(e.toString());
-      rethrow;
+      return false;
     }
   }
 

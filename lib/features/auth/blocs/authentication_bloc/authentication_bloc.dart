@@ -10,17 +10,20 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'authentication_event.dart';
 part 'authentication_state.dart';
 
-class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> {
+class AuthenticationBloc
+    extends Bloc<AuthenticationEvent, AuthenticationState> {
   final FirebaseUserRepo userRepository;
   final WorkerRepo workerRepository;
   late final StreamSubscription<User?> _userSubscription;
 
-  AuthenticationBloc({required this.userRepository, required this.workerRepository})
+  AuthenticationBloc(
+      {required this.userRepository, required this.workerRepository})
       : super(const AuthenticationState.unknown()) {
     _userSubscription = userRepository.user.listen((user) {
       add(AuthenticationUserChanged(user));
     });
     on<AuthenticationUserChanged>((event, emit) async {
+      add(const AuthenticationCheckUserLoggedInEvent());
       // SharedPreferences prefs = await SharedPreferences.getInstance();
       // bool isRegistered = prefs.getBool('isRegistered') ?? false;
       // if (event.user != null && isRegistered) {
@@ -35,14 +38,27 @@ class AuthenticationBloc extends Bloc<AuthenticationEvent, AuthenticationState> 
       }
     });
     on<AuthenticationCheckUserLoggedInEvent>((event, emit) async {
+      emit(const AuthenticationState.loading());
+
       final user = await userRepository.getCurrentUserId();
 
       //!? REMOVE THE SHARED PREFERENCES IF APP LOADING IS TAKING TIME
-      SharedPreferences prefs = await SharedPreferences.getInstance();
+      // SharedPreferences prefs = await SharedPreferences.getInstance();
       //!!! getOrElse method not tested by me
-      bool isUserCreatedInFirestore = (await workerRepository.isUserCreatedInFirestore(user)).getOrElse(() => false);
-      bool registrationSuccess = prefs.getBool('isRegistered$user') ?? false;
-      if (user != "userIdNotFound" && registrationSuccess || user!= "userIdNotFound" && isUserCreatedInFirestore) {
+      bool isUserCreatedInFirestore =
+          (await workerRepository.isUserCreatedInFirestore(user))
+              .getOrElse(() => false);
+      // bool registrationSuccess = prefs.getBool('isRegistered$user') ?? false;
+      // if (user != "userIdNotFound" && registrationSuccess ||
+      //     user != "userIdNotFound" && isUserCreatedInFirestore) {
+      //   emit(const AuthenticationState.registered());
+      // } else if (user != "userIdNotFound") {
+      //   emit(const AuthenticationState.authenticated());
+      // } else {
+      //   emit(const AuthenticationState.unauthenticated());
+      // }
+      //WITHOUT USING SHAREDPREFERENCES
+      if (user != "userIdNotFound" && isUserCreatedInFirestore) {
         emit(const AuthenticationState.registered());
       } else if (user != "userIdNotFound") {
         emit(const AuthenticationState.authenticated());

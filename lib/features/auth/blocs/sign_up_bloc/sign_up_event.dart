@@ -15,10 +15,10 @@ class SignUpRequired extends SignUpEvent {
 }
 
 
-class RegistrationRequired extends SignUpEvent {
-  final WorkerModel worker;
+// class RegistrationRequired extends SignUpEvent {
+//   final WorkerModel worker;
 
-  const RegistrationRequired({required this.worker});
-}
+//   const RegistrationRequired({required this.worker});
+// }
 
 // class CheckRegistrationStatus extends SignUpEvent {}

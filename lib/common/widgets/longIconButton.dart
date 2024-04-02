@@ -9,6 +9,7 @@ class LongIconButton extends StatelessWidget {
   final Color? foregroundColor;
   final Color? backgroundColor;
   final double height; // Added optional height with default value
+  final bool isLoading;
 
   const LongIconButton({
     Key? key,
@@ -18,6 +19,7 @@ class LongIconButton extends StatelessWidget {
     this.foregroundColor,
     this.backgroundColor,
     this.height = 54, // Set default value for height
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
@@ -27,7 +29,8 @@ class LongIconButton extends StatelessWidget {
       height: height,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? Theme.of(context).colorScheme.primary,
+          backgroundColor:
+              backgroundColor ?? Theme.of(context).colorScheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -36,15 +39,20 @@ class LongIconButton extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text(
-              text,
-              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                color: foregroundColor ?? Theme.of(context).colorScheme.onPrimary,)
-            ),
-            if (svgPath != null) ...[
+            if (isLoading)
+            const CircularProgressIndicator.adaptive(),
+            if (!isLoading)Text(text,
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: foregroundColor ??
+                          Theme.of(context).colorScheme.onPrimary,
+                    )),
+            
+            if (svgPath != null && !isLoading) ...[
               QuikSpacing.hS6(),
               SvgPicture.asset(
-                colorFilter: ColorFilter.mode(foregroundColor ?? Theme.of(context).colorScheme.onPrimary, BlendMode.srcIn),
+                colorFilter: ColorFilter.mode(
+                    foregroundColor ?? Theme.of(context).colorScheme.onPrimary,
+                    BlendMode.srcIn),
                 svgPath!,
                 height: 14,
                 width: 14,
