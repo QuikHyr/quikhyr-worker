@@ -65,6 +65,8 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                   content: Text(state.message),
                 ),
               );
+            } else if (state is RegistrationSuccess) {
+              context.goNamed(QuikRoutes.homeName);
             }
           },
           child: PageView(
@@ -130,26 +132,25 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           // );
           //!!DANGEROUS CODE CAUSE OF NULL CHECK
           SignUpState state = context.read<SignUpBloc>().state;
-          if(state is SignUpSuccessWithWorker) {
+          if (state is SignUpSuccessWithWorker) {
             WorkerModel worker = state.worker;
             worker = worker.copyWith(
-            gender: _genderController.text.trim(),
-            age: age,
-            pincode: _pincodeController.text.trim(),
-            location: LocationModel(
-              latitude: 10.353987,
-              longitude: 76.210751,
-            ),
-            fcmToken: "testWorker1fcmToken",
-            subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
-            serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
-          );
-                    context.read<SignUpBloc>().add(RegistrationRequired(
-                worker: worker,
-              ));
+              gender: _genderController.text.trim(),
+              age: age,
+              pincode: _pincodeController.text.trim(),
+              location: LocationModel(
+                latitude: 10.353987,
+                longitude: 76.210751,
+              ),
+              fcmToken: "testWorker1fcmToken",
+              subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
+              serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
+            );
+            log(worker.toString());
+            context.read<SignUpBloc>().add(RegistrationRequired(
+                  worker: worker,
+                ));
           }
-        
-
         }
       },
       color: Colors.grey,

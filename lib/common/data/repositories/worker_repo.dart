@@ -18,6 +18,23 @@ class WorkerRepo {
   }
 
 
+  Future<Either<String, bool>> isUserCreatedInFirestore(String userId) async {
+    try {
+      final url = Uri.parse('$baseUrl/workers/$userId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return const Right(true);
+      } else if (response.statusCode == 404) {
+        return const Right(false);
+      } else {
+        return const Left('Failed to check user existence in Firestore');
+      }
+    } catch (e) {
+      return Left('Failed to check user existence in Firestore: $e');
+    }
+  }
+
 
   Future<Either<String, String>> updateWorkerPincode(
       {required String workerId, required String pincode}) async {

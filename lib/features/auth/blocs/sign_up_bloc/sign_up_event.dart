@@ -20,3 +20,5 @@ class RegistrationRequired extends SignUpEvent {
 
   const RegistrationRequired({required this.worker});
 }
+
+// class CheckRegistrationStatus extends SignUpEvent {}

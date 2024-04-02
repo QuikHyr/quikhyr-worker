@@ -17,13 +17,13 @@ class SimpleBlocObserver extends BlocObserver {
   @override
   void onChange(BlocBase bloc, Change change) {
     super.onChange(bloc, change);
-    log('onChange -- bloc: ${bloc.runtimeType}, change: $change');
+    log('onChange -- bloc: ${bloc.runtimeType}, change: $change, hashCode: ${bloc.hashCode}');
   }
 
   @override
   void onTransition(Bloc bloc, Transition transition) {
     super.onTransition(bloc, transition);
-    log('onTransition -- bloc: ${bloc.runtimeType}, transition: $transition');
+    log('onTransition -- bloc: ${bloc.runtimeType}, transition: $transition, hashCode: ${bloc.hashCode}');
   }
 
   @override

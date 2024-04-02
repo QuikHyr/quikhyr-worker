@@ -24,30 +24,40 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<AuthenticationBloc>(create: (context) {
-            final userRepository = context.read<FirebaseUserRepo>();
-            return AuthenticationBloc(userRepository: userRepository);
-          }),
+          BlocProvider<AuthenticationBloc>(
+              lazy: false,
+              create: (context) {
+                final userRepository = context.read<FirebaseUserRepo>();
+                return AuthenticationBloc(userRepository: userRepository, workerRepository: context.read<WorkerRepo>())
+                  ..add(const AuthenticationCheckUserLoggedInEvent());
+              }),
           BlocProvider<SignInBloc>(create: (context) {
             final userRepository = context.read<FirebaseUserRepo>();
 
-            return SignInBloc(userRepository: userRepository);
+            return SignInBloc(
+                userRepository: userRepository,
+                authenticationBloc: context.read<AuthenticationBloc>());
           }),
-          BlocProvider<SignUpBloc>(lazy: false,create: (context) {
+          BlocProvider<SignUpBloc>(create: (context) {
             final userRepository = context.read<FirebaseUserRepo>();
 
-            return SignUpBloc(userRepository: userRepository);
+            return SignUpBloc(
+                userRepository: userRepository,
+                authenticationBloc: context.read<AuthenticationBloc>());
           }),
           BlocProvider<WorkerBloc>(create: (context) {
             final workerRepo = context.read<WorkerRepo>();
             final firebaseUserRepo = context.read<FirebaseUserRepo>();
-            return WorkerBloc(workerRepository: workerRepo, firebaseUserRepo: firebaseUserRepo)..add(FetchWorker());
+            return WorkerBloc(
+                workerRepository: workerRepo,
+                firebaseUserRepo: firebaseUserRepo)
+              ..add(FetchWorker());
           }),
         ],
-        child: ChangeNotifierProvider(create: (_) => FirebaseProvider(),child: const MyAppView()),
+        child: ChangeNotifierProvider(
+            create: (_) => FirebaseProvider(), child: const MyAppView()),
         // child: MyAppView()),
       ),
-      
     );
   }
 }
