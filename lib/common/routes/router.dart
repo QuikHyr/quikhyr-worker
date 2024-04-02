@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
-import 'package:quikhyr_worker/features/auth/blocs/sign_up_bloc/sign_up_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/registration_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';

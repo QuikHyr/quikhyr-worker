@@ -26,6 +26,10 @@ class FirebaseUserRepo {
     return _firebaseAuth.currentUser?.uid ?? 'userIdNotFound';
   }
 
+  Future<String> getCurrentUserEmail() async {
+    return _firebaseAuth.currentUser?.email ?? 'emailNotFound';
+  }
+
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     try {
       await _firebaseAuth.signInWithEmailAndPassword(

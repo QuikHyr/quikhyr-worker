@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
+import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
@@ -74,6 +75,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             controller: pageController,
             children: [
               buildProfileInfo(),
+              buildMoreProfileInfo(),
             ],
             // onPageChanged: (num) {
             //   setState(() {
@@ -91,12 +93,16 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
   final _dobController = TextEditingController();
   final _pincodeController = TextEditingController();
   final _genderController = TextEditingController();
+  final _nameController = TextEditingController();
+  final _phoneController = TextEditingController();
 
   Pages buildProfileInfo() {
     return Pages(
       formKey: _profileInfoFormKey,
       pageController: pageController,
       onButtonPressed: () async {
+        final String id = await FirebaseUserRepo().getCurrentUserId();
+        final String email = await FirebaseUserRepo().getCurrentUserEmail();
         if (_profileInfoFormKey.currentState!.validate()) {
           // Calculate age based on dob
           int calculateAge(DateTime dob) {
@@ -131,26 +137,31 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           //   serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
           // );
           //!!DANGEROUS CODE CAUSE OF NULL CHECK
-          SignUpState state = context.read<SignUpBloc>().state;
-          if (state is SignUpSuccessWithWorker) {
-            WorkerModel worker = state.worker;
-            worker = worker.copyWith(
-              gender: _genderController.text.trim(),
-              age: age,
-              pincode: _pincodeController.text.trim(),
-              location: LocationModel(
-                latitude: 10.353987,
-                longitude: 76.210751,
-              ),
-              fcmToken: "testWorker1fcmToken",
-              subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
-              serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
-            );
-            log(worker.toString());
-            context.read<SignUpBloc>().add(RegistrationRequired(
-                  worker: worker,
-                ));
-          }
+          //           email: _emailController.text.trim(),
+          // name: _nameController.text.trim(),
+          WorkerModel worker = WorkerModel(
+            phone: _phoneController.text.trim(),
+            available: false,
+            email: email,
+            name: _nameController.text.trim(),
+            fcmToken: "testWorker1fcmToken",
+            isVerified: true,
+            isActive: true,
+            id: id,
+            gender: _genderController.text.trim(),
+            age: age,
+            pincode: _pincodeController.text.trim(),
+            location: LocationModel(
+              latitude: 10.353987,
+              longitude: 76.210751,
+            ),
+            subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
+            serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
+          );
+          log(worker.toString());
+          context.read<SignUpBloc>().add(RegistrationRequired(
+                worker: worker,
+              ));
         }
       },
       color: Colors.grey,
@@ -175,7 +186,44 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
         const SizedBox(
           height: 12.0,
         ),
+        MyTextField(
+          controller: _phoneController,
+          hintText: "Enter phone*",
+          obscureText: false,
+          keyboardType: TextInputType.phone,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your phone number';
+            }
+            // String for phone number validation
+            String pattern = r'^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$';
+            RegExp regex = RegExp(pattern);
+            if (!regex.hasMatch(value)) {
+              return 'Enter a valid phone number';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(
+          height: 12.0,
+        ),
+        MyTextField(
+          controller: _nameController,
+          hintText: "Enter name*",
+          obscureText: false,
+          keyboardType: TextInputType.text,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'Please enter your name';
+            }
+            return null;
+          },
+        ),
+        const SizedBox(
+          height: 12.0,
+        ),
         Container(
+          height: 54,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
             color: const Color(0xFF313131),
@@ -247,9 +295,10 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
             return null;
           },
           onTap: () async {
+            final BuildContext dialogContext = context;
             FocusScope.of(context).requestFocus(FocusNode());
             final DateTime? picked = await showDatePicker(
-              context: context,
+              context: dialogContext,
               initialDate: DateTime.now(),
               firstDate: DateTime(1900),
               lastDate: DateTime.now(),
@@ -277,6 +326,57 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
           },
         ),
       ],
+    );
+  }
+
+  Pages buildMoreProfileInfo() {
+    return Pages(
+      formKey: _profileInfoFormKey,
+      pageController: pageController,
+      onButtonPressed: () {},
+      //   final String id = await FirebaseUserRepo().getCurrentUserId();
+      //   final String email = await FirebaseUserRepo().getCurrentUserEmail();
+      //   if (_profileInfoFormKey.currentState!.validate()) {
+      //     // Calculate age based on dob
+      //     int calculateAge(DateTime dob) {
+      //       final now = DateTime.now();
+      //       int age = now.year - dob.year;
+      //       if (now.month < dob.month ||
+      //           (now.month == dob.month && now.day < dob.day)) {
+      //         age--;
+      //       }
+      //       return age;
+      //     }
+
+      //     int age = calculateAge(DateTime.parse(_dobController.text));
+      //     WorkerModel worker = WorkerModel(
+      //       phone: _phoneController.text.trim(),
+      //       available: false,
+      //       email: email,
+      //       name: _nameController.text.trim(),
+      //       fcmToken: "testWorker1fcmToken",
+      //       isVerified: true,
+      //       isActive: true,
+      //       id: id,
+      //       gender: _genderController.text.trim(),
+      //       age: age,
+      //       pincode: _pincodeController.text.trim(),
+      //       location: LocationModel(
+      //         latitude: 10.353987,
+      //         longitude: 76.210751,
+      //       ),
+      //       subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
+      //       serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
+      //     );
+      //     log(worker.toString());
+      //     context.read<SignUpBloc>().add(RegistrationRequired(
+      //           worker: worker,
+      //         ));
+      //   }
+      // },
+      color: Colors.grey,
+      buttonText: "Continue",
+      children: [],
     );
   }
 }

@@ -8,7 +8,6 @@ import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
-import 'package:quikhyr_worker/features/home/presentation/screens/home/home_screen.dart';
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
