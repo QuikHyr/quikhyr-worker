@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quikhyr_worker/common/data/repositories/worker_repo.dart';
 import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 part 'authentication_event.dart';
 part 'authentication_state.dart';
@@ -38,7 +37,6 @@ class AuthenticationBloc
       }
     });
     on<AuthenticationCheckUserLoggedInEvent>((event, emit) async {
-      emit(const AuthenticationState.loading());
 
       final user = await userRepository.getCurrentUserId();
 

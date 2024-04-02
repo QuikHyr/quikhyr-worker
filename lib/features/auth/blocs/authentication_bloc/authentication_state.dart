@@ -1,7 +1,6 @@
 part of 'authentication_bloc.dart';
 
 enum AuthenticationStatus {
-  loading,
   authenticated,
   unauthenticated,
   unknown,
@@ -22,8 +21,6 @@ class AuthenticationState extends Equatable {
   
   const AuthenticationState.registered(): this._(status: AuthenticationStatus.registered);
 
-  const AuthenticationState.loading()
-      : this._(status: AuthenticationStatus.loading);
 
 
   final AuthenticationStatus status;

@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/routes/screens/page_not_found.dart';
+import 'package:quikhyr_worker/common/routes/screens/splash_screen.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
@@ -32,6 +33,29 @@ class AppRouter {
   static final GoRouter _router = GoRouter(
     initialLocation: QuikRoutes.homePath,
     debugLogDiagnostics: true,
+    // redirect: (context, state)async {
+    //     BlocListener<AuthenticationBloc, AuthenticationState>(
+    //       listener: (context, authState) {
+    //         if (authState.status == AuthenticationStatus.unknown) {
+    //           context.goNamed(QuikRoutes.welcomeName);
+    //         }
+    //         if (authState.status == AuthenticationStatus.registered) {
+    //           context.goNamed(QuikRoutes.homeName);
+    //           return;
+    //         } else if (authState.status ==
+    //             AuthenticationStatus.unauthenticated) {
+    //           // User is not authenticated, redirect to login
+    //           context.goNamed(QuikRoutes.signUpName);
+    //         } else if (authState.status == AuthenticationStatus.authenticated) {
+    //           // User is authenticated but not registered, redirect to registration
+    //           context.goNamed(QuikRoutes.signUpName);
+    //         }
+    //       },
+    //       child: Container(),
+    //     );
+    //     return null;
+    //   },
+    
     navigatorKey: _rootNavigatorKey,
     routes: [
 // BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -49,26 +73,23 @@ class AppRouter {
       StatefulShellRoute.indexedStack(
           builder: (context, state, navigationShell) {
             debugPrint("Going to Main Wrapper");
-            return BlocConsumer<AuthenticationBloc, AuthenticationState>(
-                listener: (context, state) {
-              if (state.status case AuthenticationStatus.loading) {
-                debugPrint("Loading");
-              }
-              else if (state.status case AuthenticationStatus.registered) {
-                context.goNamed(QuikRoutes.homeName);
-              } 
-               else if (state.status case AuthenticationStatus.unknown) {
-                context.goNamed(QuikRoutes.welcomeName);
-              } else if (state.status case AuthenticationStatus.authenticated) {
-                context.goNamed(QuikRoutes.signUpName);
-              } else if (state.status case AuthenticationStatus.unauthenticated) {
-                context.goNamed(QuikRoutes.welcomeName);
-              } else {
-                debugPrint("Default");
-              }
-            }, builder: (context, authState) {
+            return BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                //   listener: (context, state) {
+                //   // if (state.status case AuthenticationStatus.registered) {
+                //   //   context.goNamed(QuikRoutes.homeName);
+                //   // } else if (state.status case AuthenticationStatus.unknown) {
+                //   //   context.goNamed(QuikRoutes.welcomeName);
+                //   // } else if (state.status case AuthenticationStatus.authenticated) {
+                //   //   context.goNamed(QuikRoutes.signUpName);
+                //   // } else if (state.status
+                //   //     case AuthenticationStatus.unauthenticated) {
+                //   //   context.goNamed(QuikRoutes.welcomeName);
+                //   // } else {
+                //   //   debugPrint("Default");
+                //   // }
+                // },
+                builder: (context, authState) {
               if (authState.status == AuthenticationStatus.registered) {
-                debugPrint(navigationShell.shellRouteContext.route.toString());
                 return MainWrapper(
                   navigationShell: navigationShell,
                 );
@@ -244,7 +265,11 @@ class AppRouter {
           return const WelcomeScreen();
         },
       ),
-
+      GoRoute(
+          parentNavigatorKey: _rootNavigatorKey,
+          path: QuikRoutes.splashPath,
+          name: QuikRoutes.splashName,
+          builder: (context, state) => const SplashScreen()),
       //It is not necessary to provide a navigatorKey if it isn't also
       //needed elsewhere. If not provided, a default key will be used.
     ],

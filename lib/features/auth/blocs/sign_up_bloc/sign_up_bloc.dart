@@ -28,8 +28,9 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
               "${isWorkerCreationSuccess.toString()} isWorkerCreationSuccess");
           //           SharedPreferences prefs = await SharedPreferences.getInstance();
           // await prefs.setBool('isRegistered${event.worker.id}', true);
-          _authenticationBloc.add(const AuthenticationCheckUserLoggedInEvent());
           emit(const SignUpSuccess());
+          _authenticationBloc.add(const AuthenticationCheckUserLoggedInEvent());
+
         } else {
           emit(const SignUpFailure('Worker creation failed'));
           

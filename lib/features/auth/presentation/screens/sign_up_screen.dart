@@ -1,14 +1,13 @@
-import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
-import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
@@ -495,29 +494,37 @@ class Pages extends StatelessWidget {
               ),
               Column(
                 children: [
-                  BlocBuilder<SignUpBloc, SignUpState>(
-                    builder: (context, state) {
-                      if (state is SignUpInitial) {
-                        return LongIconButton(
-                          text: buttonText,
-                          onPressed: onButtonPressed,
-                          svgPath: QuikAssetConstants.rightArrowSvg,
-                        );
-                      } else if (state is SignUpProcess) {
-                        return LongIconButton(
-                          isLoading: true,
-                          text: "Please wait...",
-                          onPressed: (){},
-                          svgPath: QuikAssetConstants.rightArrowSvg,
-                        );
-                      } else {
-                        return LongIconButton(
-                          text: "Please wait...",
-                          onPressed: (){},
-                          svgPath: QuikAssetConstants.rightArrowSvg,
-                        );
+                  BlocListener<SignInBloc, SignInState>(
+                    listener: (context, state) {
+                      if(state is SignUpSuccess) {
+                        context.read<AuthenticationBloc>().add(const AuthenticationCheckUserLoggedInEvent()); 
+                        context.goNamed(QuikRoutes.homeName);
                       }
                     },
+                    child: BlocBuilder<SignUpBloc, SignUpState>(
+                      builder: (context, state) {
+                        if (state is SignUpInitial) {
+                          return LongIconButton(
+                            text: buttonText,
+                            onPressed: onButtonPressed,
+                            svgPath: QuikAssetConstants.rightArrowSvg,
+                          );
+                        } else if (state is SignUpProcess) {
+                          return LongIconButton(
+                            isLoading: true,
+                            text: "Please wait...",
+                            onPressed: () {},
+                            svgPath: QuikAssetConstants.rightArrowSvg,
+                          );
+                        } else {
+                          return LongIconButton(
+                            text: "Please wait...",
+                            onPressed: () {},
+                            svgPath: QuikAssetConstants.rightArrowSvg,
+                          );
+                        }
+                      },
+                    ),
                   ),
                   const SizedBox(
                     height: 20.0,
