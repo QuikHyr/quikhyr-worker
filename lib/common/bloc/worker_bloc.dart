@@ -10,15 +10,19 @@ import 'package:quikhyr_worker/models/worker_model.dart';
 part 'worker_state.dart';
 part 'worker_event.dart';
 
-class WorkerBloc extends Bloc<WorkerEvent, WorkerState>{
+class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
   final WorkerRepo workerRepository;
   final FirebaseUserRepo firebaseUserRepo;
-
+  StreamSubscription? _userSubscription;
   WorkerBloc({required this.workerRepository, required this.firebaseUserRepo})
       : super(WorkerInitial()) {
     on<FetchWorker>(_onFetchWorker);
     on<UpdatePincode>(_onUpdatePincode);
     on<ResetWorker>(_onResetWorker);
+
+    _userSubscription = firebaseUserRepo.user.listen((user) {
+      add(FetchWorker());
+    });
   }
 
   FutureOr<void> _onFetchWorker(
@@ -45,5 +49,11 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState>{
 
   FutureOr<void> _onResetWorker(ResetWorker event, Emitter<WorkerState> emit) {
     emit(WorkerInitial());
+  }
+
+  @override
+  Future<void> close() {
+    _userSubscription?.cancel();
+    return super.close();
   }
 }
