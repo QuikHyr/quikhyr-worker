@@ -28,8 +28,9 @@ class MyApp extends StatelessWidget {
               lazy: false,
               create: (context) {
                 final userRepository = context.read<FirebaseUserRepo>();
-                return AuthenticationBloc(userRepository: userRepository, workerRepository: context.read<WorkerRepo>())
-                  ..add(const AuthenticationCheckUserLoggedInEvent());
+                return AuthenticationBloc(
+                    userRepository: userRepository,
+                    workerRepository: context.read<WorkerRepo>());
               }),
           BlocProvider<SignInBloc>(create: (context) {
             final userRepository = context.read<FirebaseUserRepo>();

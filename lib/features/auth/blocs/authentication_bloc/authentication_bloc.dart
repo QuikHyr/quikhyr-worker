@@ -22,7 +22,6 @@ class AuthenticationBloc
       add(AuthenticationUserChanged(user));
     });
     on<AuthenticationUserChanged>((event, emit) async {
-      add(const AuthenticationCheckUserLoggedInEvent());
       // SharedPreferences prefs = await SharedPreferences.getInstance();
       // bool isRegistered = prefs.getBool('isRegistered') ?? false;
       // if (event.user != null && isRegistered) {

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({Key? key}) : super(key: key);
+  const SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
