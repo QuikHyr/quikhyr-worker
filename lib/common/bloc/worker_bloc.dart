@@ -21,7 +21,9 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     on<ResetWorker>(_onResetWorker);
 
     _userSubscription = firebaseUserRepo.user.listen((user) {
+      if (user != null) {
       add(FetchWorker());
+      }
     });
   }
 

@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
@@ -495,17 +494,33 @@ class Pages extends StatelessWidget {
               ),
               Column(
                 children: [
-                  BlocListener<SignInBloc, SignInState>(
-                    listener: (context, state) {
-                      if(state is SignUpSuccess) {
-                        context.read<AuthenticationBloc>().add(const AuthenticationCheckUserLoggedInEvent());
-                        context.read<WorkerBloc>().add(FetchWorker());
-                        context.goNamed(QuikRoutes.homeName);
-                      }
-                    },
+                  MultiBlocListener(
+                    listeners: [
+                      BlocListener<SignInBloc, SignInState>(
+                        listener: (context, state) {
+                          if (state is SignUpSuccess){
+                            context.read<AuthenticationBloc>().add(
+                                const AuthenticationCheckUserLoggedInEvent());
+                            // context.read<WorkerBloc>().add(FetchWorker());
+                            // context.goNamed(QuikRoutes.homeName);
+                          }
+                        },
+                      ),
+                      BlocListener<AuthenticationBloc, AuthenticationState>(
+                        // listenWhen: (previous, current) {
+                        //   return previous.status != current.status;
+                        // },
+                        listener: (context, state) {
+                          if(state.status == AuthenticationStatus.registered){
+                            context.read<WorkerBloc>().add(FetchWorker());
+                          }
+                        },
+                      ),
+                    ],
                     child: BlocBuilder<SignUpBloc, SignUpState>(
                       builder: (context, state) {
-                        if (state is SignUpInitial) {
+                        //!!BETTER WAY TO INCLUDE SIGNUPSUCCESS MAY BE TO RESET STATES ON USER LOGOUT
+                        if (state is SignUpInitial || state is SignUpSuccess) {
                           return LongIconButton(
                             text: buttonText,
                             onPressed: onButtonPressed,
