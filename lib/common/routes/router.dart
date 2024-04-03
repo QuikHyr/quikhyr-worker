@@ -42,16 +42,25 @@ abstract class AppRouter {
     debugLogDiagnostics: true,
     redirect: (context, state) async {
       final status = context.read<AuthenticationBloc>().state.status;
-      if (status == AuthenticationStatus.registered) {
-        return QuikRoutes.homePath;
-      }
-      if (state.matchedLocation == QuikRoutes.homePath) {
-        if (status == AuthenticationStatus.registered) {
-          return null;
-        } else {
-          return QuikRoutes.welcomePath;
+      if(state.matchedLocation == QuikRoutes.signUpPath || state.matchedLocation == QuikRoutes.signInPath || state.matchedLocation == QuikRoutes.welcomePath || state.matchedLocation == QuikRoutes.splashPath){
+        if(status == AuthenticationStatus.registered){
+          return QuikRoutes.homePath;
         }
+        return null;
       }
+      if (status == AuthenticationStatus.unknown || status == AuthenticationStatus.unauthenticated){
+        return QuikRoutes.welcomePath;
+      }
+      // if (status == AuthenticationStatus.registered) {
+      //   return QuikRoutes.homePath;
+      // }
+      // if (state.matchedLocation == QuikRoutes.homePath) {
+      //   if (status == AuthenticationStatus.registered) {
+      //     return null;
+      //   } else {
+      //     return QuikRoutes.welcomePath;
+      //   }
+      // }
 
       return null;
       // String? returnPath = QuikRoutes.homePath;
