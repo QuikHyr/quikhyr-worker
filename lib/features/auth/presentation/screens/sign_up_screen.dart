@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
@@ -497,7 +498,8 @@ class Pages extends StatelessWidget {
                   BlocListener<SignInBloc, SignInState>(
                     listener: (context, state) {
                       if(state is SignUpSuccess) {
-                        context.read<AuthenticationBloc>().add(const AuthenticationCheckUserLoggedInEvent()); 
+                        context.read<AuthenticationBloc>().add(const AuthenticationCheckUserLoggedInEvent());
+                        context.read<WorkerBloc>().add(FetchWorker());
                         context.goNamed(QuikRoutes.homeName);
                       }
                     },
