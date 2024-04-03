@@ -7,9 +7,12 @@ import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:quikhyr_worker/features/auth/blocs/bloc/service_and_subservice_list_bloc.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
+import 'package:quikhyr_worker/models/service_model.dart';
+import 'package:quikhyr_worker/models/subservices_model.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
 import '../../blocs/sign_up_bloc/sign_up_bloc.dart';
 
@@ -24,6 +27,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final PageController pageController = PageController();
   // int _curr = 0;
   final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<ServiceAndSubserviceListBloc>().add(GetServiceList());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +73,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           children: [
             buildSignUp(),
             buildSetPassword(),
+            buildAddDetails(),
             buildProfileInfo(),
           ],
           // onPageChanged: (num) {
@@ -319,6 +329,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
+  final _serviceController = TextEditingController();
+  final _subserviceController = TextEditingController();
+  List<ServiceModel> _services = [];
+  List<SubserviceModel> _subservices = [];
+  buildAddDetails() {
+    return BlocConsumer<ServiceAndSubserviceListBloc, ServiceAndSubserviceListState>(
+    listener: (context, state) {
+      if (state is ServiceListLoaded) {
+        _services = state.serviceModel; // assuming services is a list in ServiceModel
+      } else if (state is SubserviceListLoaded) {
+        _subservices = state.subserviceModel; // assuming subservices is a list in SubserviceModel
+      }
+    },
+    builder: (context, state) {
+      // Add dropdown menus for service and subservice selection in the appropriate place
+      return DropdownButtonFormField<String>(
+        items: _services.map((service) {
+          return DropdownMenuItem<String>(
+            value: service.id, // assuming id is a field in ServiceModel
+            child: Text(service.name), // assuming name is a field in ServiceModel
+          );
+        }).toList(),
+        onChanged: (serviceId) {
+          context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList(serviceId: serviceId!));
+        },
+      );
+      // Similarly for subservices
+    },
+  );
+  }
+
   Pages buildSignUp() {
     return Pages(
       formKey: _signUpFormKey,
@@ -498,7 +539,7 @@ class Pages extends StatelessWidget {
                     listeners: [
                       BlocListener<SignInBloc, SignInState>(
                         listener: (context, state) {
-                          if (state is SignUpSuccess){
+                          if (state is SignUpSuccess) {
                             context.read<AuthenticationBloc>().add(
                                 const AuthenticationCheckUserLoggedInEvent());
                             // context.read<WorkerBloc>().add(FetchWorker());
@@ -511,7 +552,7 @@ class Pages extends StatelessWidget {
                         //   return previous.status != current.status;
                         // },
                         listener: (context, state) {
-                          if(state.status == AuthenticationStatus.registered){
+                          if (state.status == AuthenticationStatus.registered) {
                             context.read<WorkerBloc>().add(FetchWorker());
                           }
                         },
