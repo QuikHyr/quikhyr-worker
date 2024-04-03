@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +21,11 @@ import 'package:quikhyr_worker/features/settings/presentation/screens/settings_s
 import 'package:quikhyr_worker/main_wrapper.dart';
 import 'package:quikhyr_worker/models/client_model.dart';
 
-class AppRouter {
+abstract class AppRouter {
+  final AuthenticationBloc authBloc;
+  AppRouter({
+    required this.authBloc,
+  });
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
   static final _shellNavigatorHomeKey =
       GlobalKey<NavigatorState>(debugLabel: 'shellHome');
@@ -33,29 +40,41 @@ class AppRouter {
   static final GoRouter _router = GoRouter(
     initialLocation: QuikRoutes.homePath,
     debugLogDiagnostics: true,
-    // redirect: (context, state)async {
-    //     BlocListener<AuthenticationBloc, AuthenticationState>(
-    //       listener: (context, authState) {
-    //         if (authState.status == AuthenticationStatus.unknown) {
-    //           context.goNamed(QuikRoutes.welcomeName);
-    //         }
-    //         if (authState.status == AuthenticationStatus.registered) {
-    //           context.goNamed(QuikRoutes.homeName);
-    //           return;
-    //         } else if (authState.status ==
-    //             AuthenticationStatus.unauthenticated) {
-    //           // User is not authenticated, redirect to login
-    //           context.goNamed(QuikRoutes.signUpName);
-    //         } else if (authState.status == AuthenticationStatus.authenticated) {
-    //           // User is authenticated but not registered, redirect to registration
-    //           context.goNamed(QuikRoutes.signUpName);
-    //         }
-    //       },
-    //       child: Container(),
-    //     );
-    //     return null;
-    //   },
-    
+    redirect: (context, state) async {
+      final status = context.read<AuthenticationBloc>().state.status;
+      if (status == AuthenticationStatus.registered) {
+        return QuikRoutes.homePath;
+      }
+      if (state.matchedLocation == QuikRoutes.homePath) {
+        if (status == AuthenticationStatus.registered) {
+          return null;
+        } else {
+          return QuikRoutes.welcomePath;
+        }
+      }
+
+      return null;
+      // String? returnPath = QuikRoutes.homePath;
+      // BlocListener<AuthenticationBloc, AuthenticationState>(
+      //   listener: (context, authState) {
+      //     if (authState.status == AuthenticationStatus.unknown) {
+      //       returnPath = QuikRoutes.welcomePath;
+      //     }
+      //     if (authState.status == AuthenticationStatus.registered) {
+      //       returnPath = QuikRoutes.homePath;
+      //       return;
+      //     } else if (authState.status == AuthenticationStatus.unauthenticated) {
+      //       // User is not authenticated, redirect to login
+      //       returnPath = QuikRoutes.signInPath;
+      //     } else if (authState.status == AuthenticationStatus.authenticated) {
+      //       // User is authenticated but not registered, redirect to registration
+      //       returnPath = QuikRoutes.signUpPath;
+      //     }
+      //   },
+      //   child: Container(),
+      // );
+      // return returnPath;
+    },
     navigatorKey: _rootNavigatorKey,
     routes: [
 // BlocBuilder<AuthenticationBloc, AuthenticationState>(
@@ -71,35 +90,12 @@ class AppRouter {
 //       );
 
       StatefulShellRoute.indexedStack(
+          //?UNCOMMENT IF NOT WORKING
           builder: (context, state, navigationShell) {
             debugPrint("Going to Main Wrapper");
-            return BlocBuilder<AuthenticationBloc, AuthenticationState>(
-                //   listener: (context, state) {
-                //   // if (state.status case AuthenticationStatus.registered) {
-                //   //   context.goNamed(QuikRoutes.homeName);
-                //   // } else if (state.status case AuthenticationStatus.unknown) {
-                //   //   context.goNamed(QuikRoutes.welcomeName);
-                //   // } else if (state.status case AuthenticationStatus.authenticated) {
-                //   //   context.goNamed(QuikRoutes.signUpName);
-                //   // } else if (state.status
-                //   //     case AuthenticationStatus.unauthenticated) {
-                //   //   context.goNamed(QuikRoutes.welcomeName);
-                //   // } else {
-                //   //   debugPrint("Default");
-                //   // }
-                // },
-                builder: (context, authState) {
-              if (authState.status == AuthenticationStatus.registered) {
-                return MainWrapper(
-                  navigationShell: navigationShell,
-                );
-              } else if (authState.status ==
-                  AuthenticationStatus.unauthenticated) {
-                return const WelcomeScreen();
-              } else {
-                return const WelcomeScreen();
-              }
-            });
+            return MainWrapper(
+              navigationShell: navigationShell,
+            );
           },
           branches: <StatefulShellBranch>[
             StatefulShellBranch(

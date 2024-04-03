@@ -18,6 +18,7 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState>{
       : super(WorkerInitial()) {
     on<FetchWorker>(_onFetchWorker);
     on<UpdatePincode>(_onUpdatePincode);
+    on<ResetWorker>(_onResetWorker);
   }
 
   FutureOr<void> _onFetchWorker(
@@ -40,5 +41,9 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState>{
       (error) => emit(PincodeUpdatedError(error: error)),
       (worker) => add(FetchWorker()),
     );
+  }
+
+  FutureOr<void> _onResetWorker(ResetWorker event, Emitter<WorkerState> emit) {
+    emit(WorkerInitial());
   }
 }
