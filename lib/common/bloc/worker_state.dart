@@ -28,3 +28,13 @@ final class PincodeUpdatedError extends PincodeState {
 }
 
 final class PincodeUpdating extends PincodeState {}
+
+final class LocationUpdating extends WorkerState {}
+
+final class LocationUpdatedSuccess extends WorkerState {}
+
+final class LocationUpdatedError extends WorkerState {
+  final String error;
+
+  LocationUpdatedError({required this.error});
+}

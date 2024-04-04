@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:quikhyr_worker/common/quik_secure_constants.dart';
+import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
 import 'package:http/http.dart' as http;
 
@@ -53,4 +54,22 @@ class WorkerRepo {
       return Left('Failed to update worker pincode: $e');
     }
   }
+
+Future<Either<String, String>> updateWorkerLocation(
+    {required String workerId, required LocationModel location}) async {
+  try {
+    final url = Uri.parse('$baseUrl/workers/$workerId');
+      final body = jsonEncode({'location': location.toMap()});
+    final response = await http
+        .put(url, body: body, headers: {"Content-Type": "application/json"});
+
+    if (response.statusCode == 200) {
+      return const Right('Worker location updated');
+    } else {
+      return Left('Failed to update worker location ${response.body}');
+    }
+  } catch (e) {
+    return Left('Failed to update worker location: $e');
+  }
+}
 }

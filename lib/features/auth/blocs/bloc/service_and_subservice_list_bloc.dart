@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:quikhyr_worker/features/auth/data/repository/service_and_subservice_repo.dart';
 import 'package:quikhyr_worker/models/service_model.dart';
@@ -40,9 +41,13 @@ class ServiceAndSubserviceListBloc
   FutureOr<void> _getServicesAndSubservices(GetServicesAndSubservices event, Emitter<ServiceAndSubserviceListState> emit) async{
     emit(ServiceAndSubserviceListLoading());
     final response = await dataProvider.getServicesAndSubservicesData();
+
     response.fold(
       (l) => emit(ServiceAndSubserviceListError(error: l)),
-      (r) => emit(ServiceAndSubserviceListLoaded(serviceModels: r.value1, subserviceModels: r.value2)),
+      (r) {
+      emit(ServiceAndSubserviceListLoaded(serviceModels: r.value1, subserviceModels: r.value2));
+      debugPrint('Success response: $r');
+      },
     );
   }
 }

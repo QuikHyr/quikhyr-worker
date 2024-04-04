@@ -1,10 +1,15 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:multi_select_flutter/multi_select_flutter.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
+import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
+import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
@@ -90,6 +95,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 
   final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _workerDetailsProfileFormKey =
+      GlobalKey<FormState>();
+
   final GlobalKey<FormState> _setPasswordFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _profileInfoFormKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
@@ -127,15 +135,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
             age: age,
             available: false,
             location: LocationModel(
-              latitude: 10.353987,
-              longitude: 76.210751,
+              latitude: _position.latitude,
+              longitude: _position.latitude,
             ),
             pincode: _pincodeController.text.trim(),
             fcmToken: "testWorker1fcmToken",
             isVerified: false,
             isActive: false,
-            subserviceIds: const ["rcDOmxSMHmeOByqZzIZP"],
-            serviceIds: const ["nnC5VNxDoGcV1DOBeAz5"],
+            subserviceIds: _selectedSubServicesList!.map((e) => e.id).toList(),
+            serviceIds: _selectedServicesList!.map((e) => e.id).toList(),
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));
@@ -276,7 +284,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       onButtonPressed: () {
         if (_setPasswordFormKey.currentState!.validate()) {
           // Navigate to the next page
-          pageController.animateToPage(2,
+          pageController.nextPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn);
         }
@@ -332,20 +340,53 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  final _serviceController = TextEditingController();
-  final _subserviceController = TextEditingController();
-  ServiceModel? _selectedService;
-  List<ServiceModel> _services = [];
-  List<SubserviceModel> _subservices = [];
-
+  List<ServiceModel>? _selectedServicesList;
+  List<SubserviceModel>? _selectedSubServicesList;
+  List<ServiceModel> _allServicesList = [];
+  List<SubserviceModel> _allSubservicesList = [];
+  Position _position = Position(
+    headingAccuracy: 0.0,
+    altitudeAccuracy: 0.0,
+    latitude: 10.353987,
+    longitude: 76.210751,
+    timestamp: DateTime.now(),
+    accuracy: 0.0,
+    altitude: 0.0,
+    heading: 0.0,
+    speed: 0.0,
+    speedAccuracy: 0.0,
+  );
   Pages buildAddDetails() {
     return Pages(
-        formKey: _signUpFormKey,
+        formKey: _workerDetailsProfileFormKey,
+        showLogo: false,
         pageController: pageController, // Added pageController here
-        onButtonPressed: () {
-          if (_signUpFormKey.currentState!.validate()) {
+        onButtonPressed: () async {
+          if (_workerDetailsProfileFormKey.currentState!.validate()) {
+            if (await Permission.location.serviceStatus.isEnabled) {
+              _position = await Geolocator.getCurrentPosition(
+                  desiredAccuracy: LocationAccuracy.high);
+            } else {
+              await Permission.location.request();
+            }
+            bool isValid = true;
+            for (var service in _selectedServicesList!) {
+              if (!_selectedSubServicesList!
+                  .any((subservice) => subservice.serviceId == service.id)) {
+                isValid = false;
+                break;
+              }
+            }
+            if (!isValid) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                    content: Text(
+                        'Please select at least one subservice for each selected service')),
+              );
+              return;
+            }
             // Navigate to the next page
-            pageController.animateToPage(3,
+            pageController.nextPage(
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeIn);
           }
@@ -353,12 +394,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
         color: Colors.teal,
         buttonText: "Profile Info",
         children: [
+          QuikSpacing.vS24(),
           BlocConsumer<ServiceAndSubserviceListBloc,
               ServiceAndSubserviceListState>(
             listener: (context, state) {
               if (state is ServiceAndSubserviceListLoaded) {
-                _services = state.serviceModels;
-                _subservices = state
+                _allServicesList = state.serviceModels;
+                _allSubservicesList = state
                     .subserviceModels; // assuming services is a list in ServiceModel
               }
             },
@@ -366,37 +408,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
               if (state is ServiceAndSubserviceListLoading) {
                 return const Center(child: CircularProgressIndicator());
               } else if (state is ServiceAndSubserviceListLoaded) {
+                debugPrint(_allSubservicesList.toString());
+                debugPrint(_allServicesList.toString());
+
                 return Column(
                   children: [
-                    Wrap(
-                      spacing: 8.0, // gap between chips
-                      children: _services.map((service) {
-                        return ChoiceChip(
-                          label: Text(service.name, style: chatSubTitleRead),
-                          selected: _selectedService?.id == service.id,
-                          onSelected: (selected) {
-                            setState(() {
-                              _selectedService = selected ? service : null;
-                            });
-                          },
-                        );
-                      }).toList(),
-                    ),
-                    if (_selectedService != null)
-                      Wrap(
-                        spacing: 8.0, // gap between chips
-                        children: _subservices
-                            .where((subservice) =>
-                                subservice.serviceId == _selectedService!.id)
-                            .map((subservice) {
-                          return Chip(
-                            label: Text(
-                              subservice.name,
-                              style: chatSubTitleRead,
-                            ),
-                          );
-                        }).toList(),
+                    QuikSpacing.vS32(),
+                    MultiSelectDialogField<ServiceModel>(
+                      decoration: BoxDecoration(
+                        color: textInputBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
                       ),
+                      buttonText: const Text("Select Services"),
+                      buttonIcon: const Icon(Icons.arrow_drop_down),
+                      itemsTextStyle: chatSubTitleRead,
+                      selectedItemsTextStyle: chatSubTitleRead,
+                      items: _allServicesList
+                          .map((service) => MultiSelectItem<ServiceModel>(
+                              service, service.name))
+                          .toList(),
+                      title: const Text(
+                        "Services",
+                        style: chatSubTitleRead,
+                      ),
+                      selectedColor: primary,
+                      onConfirm: (values) {
+                        setState(() {
+                          _selectedServicesList = values;
+                        });
+                      },
+                    ),
+                    QuikSpacing.vS20(),
+                    MultiSelectDialogField<SubserviceModel>(
+                      buttonText: const Text("Select Subservices"),
+                      buttonIcon: const Icon(Icons.arrow_drop_down),
+                      decoration: BoxDecoration(
+                        color: textInputBackgroundColor,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      itemsTextStyle: chatSubTitleRead,
+                      selectedItemsTextStyle: chatSubTitleRead,
+                      items: _allSubservicesList
+                          .where((subservice) => (_selectedServicesList ?? [])
+                              .any((service) =>
+                                  service.id == subservice.serviceId))
+                          .map((subservice) => MultiSelectItem<SubserviceModel>(
+                              subservice, subservice.name))
+                          .toList(),
+                      title: const Text(
+                        "Sub Services",
+                        style: chatSubTitleRead,
+                      ),
+                      selectedColor: primary,
+                      onConfirm: (values) {
+                        setState(() {
+                          _selectedSubServicesList = values;
+                        });
+                      },
+                    ),
                   ],
                 );
               } else {
@@ -428,7 +497,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       onButtonPressed: () {
         if (_signUpFormKey.currentState!.validate()) {
           // Navigate to the next page
-          pageController.animateToPage(1,
+          pageController.nextPage(
               duration: const Duration(milliseconds: 300),
               curve: Curves.easeIn);
         }
@@ -538,6 +607,7 @@ class Pages extends StatelessWidget {
   final PageController pageController;
   final VoidCallback onButtonPressed;
   final GlobalKey<FormState> formKey;
+  final bool? showLogo;
 
   const Pages(
       {super.key,
@@ -546,7 +616,8 @@ class Pages extends StatelessWidget {
       required this.children,
       required this.pageController,
       required this.onButtonPressed,
-      required this.formKey});
+      required this.formKey,
+      this.showLogo = true});
 
   @override
   Widget build(BuildContext context) {
@@ -569,6 +640,7 @@ class Pages extends StatelessWidget {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // if (showLogo == true)
                       SvgPicture.asset(
                         QuikAssetConstants.logoSvg,
                         width: 200,
@@ -577,19 +649,20 @@ class Pages extends StatelessWidget {
                       const SizedBox(
                         height: 5.0,
                       ),
-                      const Align(
-                        alignment: Alignment.centerRight,
-                        child: Text(
-                          "*Required",
-                          style: TextStyle(
-                            color: Color.fromRGBO(233, 234, 236, 0.50),
-                            fontFamily: 'Trap',
-                            fontSize: 12,
-                            fontStyle: FontStyle.normal,
-                            fontWeight: FontWeight.w600,
+                      if (showLogo == true)
+                        const Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            "*Required",
+                            style: TextStyle(
+                              color: Color.fromRGBO(233, 234, 236, 0.50),
+                              fontFamily: 'Trap',
+                              fontSize: 12,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
                     ],
                   ),
                 ),
@@ -678,5 +751,4 @@ class Pages extends StatelessWidget {
   }
 }
 
-final PageController pageController = PageController();
 // final List<Widget> _list = <Widget>[];

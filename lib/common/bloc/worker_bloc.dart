@@ -19,6 +19,7 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     on<FetchWorker>(_onFetchWorker);
     on<UpdatePincode>(_onUpdatePincode);
     on<ResetWorker>(_onResetWorker);
+    on<UpdateLocation>(_onUpdateLocation);
 
     _userSubscription = firebaseUserRepo.user.listen((user) {
       if (user != null) {
@@ -58,4 +59,14 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     _userSubscription?.cancel();
     return super.close();
   }
+
+FutureOr<void> _onUpdateLocation(UpdateLocation event, Emitter<WorkerState> emit) async {
+  emit(LocationUpdating());
+  final String workerId = await firebaseUserRepo.getCurrentUserId();
+  final result = await workerRepository.updateWorkerLocation(workerId: workerId, location: event.newLocation);
+  result.fold(
+    (error) => emit(LocationUpdatedError(error: error)),
+    (worker) => add(FetchWorker()),
+  );
+}
 }

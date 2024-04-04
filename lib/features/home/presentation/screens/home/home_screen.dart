@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
+import 'package:quikhyr_worker/models/location_model.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
@@ -77,6 +81,42 @@ class HomeScreen extends StatelessWidget {
                   if (state is WorkerLoaded) {
                     return Column(
                       children: [
+                        InkWell(
+                          onTap: () async {
+                            if (await Permission
+                                .location.serviceStatus.isEnabled) {
+                              Position position =
+                                  await Geolocator.getCurrentPosition(
+                                      desiredAccuracy: LocationAccuracy.high);
+                              context.read<WorkerBloc>().add(UpdateLocation(
+                                  LocationModel(
+                                      latitude: position.latitude,
+                                      longitude: position.longitude)));
+                            } else {
+                              await Permission.location.request();
+                            }
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                  QuikAssetConstants.locationFilledSvg),
+                              QuikSpacing.hS6(),
+                              Text(
+                                state.worker.locationName ?? "Location",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineSmall
+                                    ?.copyWith(fontWeight: FontWeight.w700),
+                              ),
+                              ClickableSvgIcon(
+                                  svgAsset: QuikAssetConstants.dropDownArrowSvg,
+                                  height: 18,
+                                  width: 18,
+                                  onTap: () {}),
+                            ],
+                          ),
+                        ),
                         Text(
                           state.worker.id,
                           style: Theme.of(context).textTheme.headlineSmall,
