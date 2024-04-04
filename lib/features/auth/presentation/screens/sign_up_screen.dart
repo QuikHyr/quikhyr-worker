@@ -32,7 +32,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList());
+    context
+        .read<ServiceAndSubserviceListBloc>()
+        .add(GetServicesAndSubservices());
   }
 
   @override
@@ -332,6 +334,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final _serviceController = TextEditingController();
   final _subserviceController = TextEditingController();
+  ServiceModel? _selectedService;
   List<ServiceModel> _services = [];
   List<SubserviceModel> _subservices = [];
 
@@ -353,36 +356,48 @@ class _SignUpScreenState extends State<SignUpScreen> {
           BlocConsumer<ServiceAndSubserviceListBloc,
               ServiceAndSubserviceListState>(
             listener: (context, state) {
-              if (state is SubserviceListLoaded) {
-                _services = state.subserviceModels; // assuming services is a list in ServiceModel
-              } else if (state is SubserviceListLoaded) {
+              if (state is ServiceAndSubserviceListLoaded) {
+                _services = state.serviceModels;
                 _subservices = state
-                    .subserviceModels; // assuming subservices is a list in SubserviceModel
+                    .subserviceModels; // assuming services is a list in ServiceModel
               }
             },
             builder: (context, state) {
-              if (state is ServiceListLoading) {
+              if (state is ServiceAndSubserviceListLoading) {
                 return const Center(child: CircularProgressIndicator());
-              } else if (state is ServiceListLoaded) {
-                return ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: _services.length,
-                  itemBuilder: (context, index) {
-                    final service = _services[index];
-                    return ListTile(
-                      title: Text(
-                        service.name,
-                        style: chatSubTitleRead,
-                      ), // assuming name is a field in ServiceModel
-                      onTap: () {
-                        // Handle service selection
-                        context.read<ServiceAndSubserviceListBloc>().add(
-                            GetSubserviceList(
-                                serviceId: service
-                                    .id));
-                      },
-                    );
-                  },
+              } else if (state is ServiceAndSubserviceListLoaded) {
+                return Column(
+                  children: [
+                    Wrap(
+                      spacing: 8.0, // gap between chips
+                      children: _services.map((service) {
+                        return ChoiceChip(
+                          label: Text(service.name, style: chatSubTitleRead),
+                          selected: _selectedService?.id == service.id,
+                          onSelected: (selected) {
+                            setState(() {
+                              _selectedService = selected ? service : null;
+                            });
+                          },
+                        );
+                      }).toList(),
+                    ),
+                    if (_selectedService != null)
+                      Wrap(
+                        spacing: 8.0, // gap between chips
+                        children: _subservices
+                            .where((subservice) =>
+                                subservice.serviceId == _selectedService!.id)
+                            .map((subservice) {
+                          return Chip(
+                            label: Text(
+                              subservice.name,
+                              style: chatSubTitleRead,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                  ],
                 );
               } else {
                 return const Center(child: Text('Error loading services'));

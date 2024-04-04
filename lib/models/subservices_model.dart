@@ -54,10 +54,7 @@ class SubserviceModel extends Equatable {
       description: map['description'] as String,
       serviceId: map['serviceId'] as String,
       serviceName: map['serviceName'] as String,
-      //!!! CHECK BELOW CODE IF ANY ERROR OCCURS
-      tags: map['tags'] is List && (map['tags'] as List).every((item) => item is String) 
-  ? List<String>.from(map['tags'] as List<String>) 
-  : throw ArgumentError('tags must be a list of strings'),
+      tags: List<String>.from(map['tags']),
       id: map['id'] as String,
     );
   }

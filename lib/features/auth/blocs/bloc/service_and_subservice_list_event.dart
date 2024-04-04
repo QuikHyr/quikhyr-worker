@@ -5,8 +5,8 @@ sealed class ServiceAndSubserviceListEvent {}
 
 // final class GetServiceList extends ServiceAndSubserviceListEvent {}
 
-final class GetSubserviceList extends ServiceAndSubserviceListEvent {
-  GetSubserviceList();
+final class GetServicesAndSubservices extends ServiceAndSubserviceListEvent {
+  GetServicesAndSubservices();
 }
 
 // final class GetServiceAndSubserviceList extends ServiceAndSubserviceListEvent {

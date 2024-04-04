@@ -28,13 +28,22 @@ Future<Either<String, List<ServiceModel>>> getServicesData() async {
     try {
       final response = await dataProvider.getSubservicesData();
       final jsonResponse = jsonDecode(response);
-      if (jsonResponse is Map<String, dynamic>) {
-        throw Exception('Unexpected response format');
-      }
-      final subserviceModelList = (jsonResponse as List<dynamic>).map((item) => SubserviceModel.fromJson(item)).toList();
+     if (jsonResponse is! List<dynamic>) {
+      throw Exception('Unexpected response format');
+    }
+    final subserviceModelList = jsonResponse.map((item) => SubserviceModel.fromJson(json.encode(item))).toList();
       return Right(subserviceModelList);
     } catch (e) {
       return Left(e.toString());
     }
   }
+  Future<Either<String, Tuple2<List<ServiceModel>, List<SubserviceModel>>>> getServicesAndSubservicesData() async {
+  try {
+    final servicesResponse = await getServicesData();
+    final subservicesResponse = await getSubservices();
+    return servicesResponse.flatMap((services) => subservicesResponse.map((subservices) => Tuple2(services, subservices)));
+  } catch (e) {
+    return Left(e.toString());
+  }
+}
 }

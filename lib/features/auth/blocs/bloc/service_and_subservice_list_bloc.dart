@@ -14,7 +14,7 @@ class ServiceAndSubserviceListBloc
       final ServiceAndSubserviceRepo dataProvider;
   ServiceAndSubserviceListBloc(this.dataProvider) : super(ServiceAndSubserviceListInitial()) {
     // on<GetServiceList>(_getServiceList);
-    on<GetSubserviceList>(_getSubserviceList);
+    on<GetServicesAndSubservices>(_getServicesAndSubservices);
   }
 
   // FutureOr<void> _getServiceList(GetServiceList event, Emitter<ServiceAndSubserviceListState> emit) async{
@@ -26,12 +26,23 @@ class ServiceAndSubserviceListBloc
   //   );
   // }
 
-  FutureOr<void> _getSubserviceList(GetSubserviceList event, Emitter<ServiceAndSubserviceListState> emit) async{
-    emit(SubserviceListLoading());
-    final response = await dataProvider.getSubservices();
+  // FutureOr<void> _getSubserviceList(GetSubserviceList event, Emitter<ServiceAndSubserviceListState> emit) async{
+  //   emit(SubserviceListLoading());
+  //   final response = await dataProvider.getSubservices();
+  //   response.fold(
+  //     (l) => emit(SubserviceListError(error: l)),
+  //     (r) => emit(SubserviceListLoaded(subserviceModel: r)),
+  //   );
+  // }
+
+
+
+  FutureOr<void> _getServicesAndSubservices(GetServicesAndSubservices event, Emitter<ServiceAndSubserviceListState> emit) async{
+    emit(ServiceAndSubserviceListLoading());
+    final response = await dataProvider.getServicesAndSubservicesData();
     response.fold(
-      (l) => emit(SubserviceListError(error: l)),
-      (r) => emit(SubserviceListLoaded(subserviceModel: r)),
+      (l) => emit(ServiceAndSubserviceListError(error: l)),
+      (r) => emit(ServiceAndSubserviceListLoaded(serviceModels: r.value1, subserviceModels: r.value2)),
     );
   }
 }
