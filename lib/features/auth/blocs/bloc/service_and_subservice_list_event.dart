@@ -3,11 +3,10 @@ part of 'service_and_subservice_list_bloc.dart';
 @immutable
 sealed class ServiceAndSubserviceListEvent {}
 
-final class GetServiceList extends ServiceAndSubserviceListEvent {}
+// final class GetServiceList extends ServiceAndSubserviceListEvent {}
 
 final class GetSubserviceList extends ServiceAndSubserviceListEvent {
-  final String serviceId;
-  GetSubserviceList({required this.serviceId});
+  GetSubserviceList();
 }
 
 // final class GetServiceAndSubserviceList extends ServiceAndSubserviceListEvent {

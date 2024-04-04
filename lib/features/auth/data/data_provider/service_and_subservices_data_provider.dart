@@ -17,9 +17,9 @@ class ServiceAndSubservicesDataProvider {
     }
   }
 
-  Future<String> getSubservicesByServiceIdData(String serviceId) async {
+  Future<String> getSubservicesData() async {
     try {
-      final url = Uri.https(baseUrl, '/services/subservices', {'serviceId': serviceId});
+      final url = Uri.https('$baseUrl/subservices');
       final response = await http.get(url);
 
       if (response.statusCode == 200) {

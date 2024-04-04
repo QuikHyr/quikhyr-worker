@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
+import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:quikhyr_worker/features/auth/blocs/bloc/service_and_subservice_list_bloc.dart';
@@ -31,7 +32,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<ServiceAndSubserviceListBloc>().add(GetServiceList());
+    context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList());
   }
 
   @override
@@ -71,9 +72,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           children: [
+            buildAddDetails(),
             buildSignUp(),
             buildSetPassword(),
-            buildAddDetails(),
             buildProfileInfo(),
           ],
           // onPageChanged: (num) {
@@ -333,31 +334,76 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _subserviceController = TextEditingController();
   List<ServiceModel> _services = [];
   List<SubserviceModel> _subservices = [];
-  buildAddDetails() {
-    return BlocConsumer<ServiceAndSubserviceListBloc, ServiceAndSubserviceListState>(
-    listener: (context, state) {
-      if (state is ServiceListLoaded) {
-        _services = state.serviceModel; // assuming services is a list in ServiceModel
-      } else if (state is SubserviceListLoaded) {
-        _subservices = state.subserviceModel; // assuming subservices is a list in SubserviceModel
-      }
-    },
-    builder: (context, state) {
-      // Add dropdown menus for service and subservice selection in the appropriate place
-      return DropdownButtonFormField<String>(
-        items: _services.map((service) {
-          return DropdownMenuItem<String>(
-            value: service.id, // assuming id is a field in ServiceModel
-            child: Text(service.name), // assuming name is a field in ServiceModel
-          );
-        }).toList(),
-        onChanged: (serviceId) {
-          context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList(serviceId: serviceId!));
+
+  Pages buildAddDetails() {
+    return Pages(
+        formKey: _signUpFormKey,
+        pageController: pageController, // Added pageController here
+        onButtonPressed: () {
+          if (_signUpFormKey.currentState!.validate()) {
+            // Navigate to the next page
+            pageController.animateToPage(3,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeIn);
+          }
         },
-      );
-      // Similarly for subservices
-    },
-  );
+        color: Colors.teal,
+        buttonText: "Profile Info",
+        children: [
+          BlocConsumer<ServiceAndSubserviceListBloc,
+              ServiceAndSubserviceListState>(
+            listener: (context, state) {
+              if (state is SubserviceListLoaded) {
+                _services = state.subserviceModels; // assuming services is a list in ServiceModel
+              } else if (state is SubserviceListLoaded) {
+                _subservices = state
+                    .subserviceModels; // assuming subservices is a list in SubserviceModel
+              }
+            },
+            builder: (context, state) {
+              if (state is ServiceListLoading) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (state is ServiceListLoaded) {
+                return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: _services.length,
+                  itemBuilder: (context, index) {
+                    final service = _services[index];
+                    return ListTile(
+                      title: Text(
+                        service.name,
+                        style: chatSubTitleRead,
+                      ), // assuming name is a field in ServiceModel
+                      onTap: () {
+                        // Handle service selection
+                        context.read<ServiceAndSubserviceListBloc>().add(
+                            GetSubserviceList(
+                                serviceId: service
+                                    .id));
+                      },
+                    );
+                  },
+                );
+              } else {
+                return const Center(child: Text('Error loading services'));
+              }
+
+              // Add dropdown menus for service and subservice selection in the appropriate place
+              // return DropdownButtonFormField<String>(
+              //   items: _services.map((service) {
+              //     return DropdownMenuItem<String>(
+              //       value: service.id, // assuming id is a field in ServiceModel
+              //       child: Text(service.name), // assuming name is a field in ServiceModel
+              //     );
+              //   }).toList(),
+              //   onChanged: (serviceId) {
+              //     context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList(serviceId: serviceId!));
+              //   },
+              // );
+              // Similarly for subservices
+            },
+          ),
+        ]);
   }
 
   Pages buildSignUp() {

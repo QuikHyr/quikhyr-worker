@@ -5,30 +5,43 @@ sealed class ServiceAndSubserviceListState {}
 
 final class ServiceAndSubserviceListInitial extends ServiceAndSubserviceListState {}
 
-sealed class ServiceListState extends ServiceAndSubserviceListState {}
+final class ServiceAndSubserviceListLoading extends ServiceAndSubserviceListState {}
 
-final class ServiceListLoading extends ServiceListState {}
-
-final class ServiceListLoaded extends ServiceListState {
-  final List<ServiceModel> serviceModel;
-  ServiceListLoaded({required this.serviceModel});
+final class ServiceAndSubserviceListLoaded extends ServiceAndSubserviceListState {
+  final List<ServiceModel> serviceModels;
+  final List<SubserviceModel> subserviceModels;
+  ServiceAndSubserviceListLoaded({required this.serviceModels, required this.subserviceModels});
 }
 
-final class ServiceListError extends ServiceListState {
+final class ServiceAndSubserviceListError extends ServiceAndSubserviceListState {
   final String error;
-  ServiceListError({required this.error});
+  ServiceAndSubserviceListError({required this.error});
 }
 
-sealed class SubserviceListState extends ServiceAndSubserviceListState {}
+// sealed class ServiceListState extends ServiceAndSubserviceListState {}
 
-final class SubserviceListLoading extends SubserviceListState {}
+// final class ServiceListLoading extends ServiceListState {}
 
-final class SubserviceListLoaded extends SubserviceListState {
-  final List<SubserviceModel> subserviceModel;
-  SubserviceListLoaded({required this.subserviceModel});
-}
+// final class ServiceListLoaded extends ServiceListState {
+//   final List<ServiceModel> serviceModel;
+//   ServiceListLoaded({required this.serviceModel});
+// }
 
-final class SubserviceListError extends SubserviceListState {
-  final String error;
-  SubserviceListError({required this.error});
-}
+// final class ServiceListError extends ServiceListState {
+//   final String error;
+//   ServiceListError({required this.error});
+// }
+
+// sealed class SubserviceListState extends ServiceAndSubserviceListState {}
+
+// final class SubserviceListLoading extends SubserviceListState {}
+
+// final class SubserviceListLoaded extends SubserviceListState {
+//   final List<SubserviceModel> subserviceModels;
+//   SubserviceListLoaded({required this.subserviceModels});
+// }
+
+// final class SubserviceListError extends SubserviceListState {
+//   final String error;
+//   SubserviceListError({required this.error});
+// }
