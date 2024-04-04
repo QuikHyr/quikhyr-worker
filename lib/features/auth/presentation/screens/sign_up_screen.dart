@@ -16,6 +16,8 @@ import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentic
 import 'package:quikhyr_worker/features/auth/blocs/bloc/service_and_subservice_list_bloc.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
+import 'package:quikhyr_worker/features/chat/firebase_storage_service.dart';
+import 'package:quikhyr_worker/features/chat/media_service.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/service_model.dart';
 import 'package:quikhyr_worker/models/subservices_model.dart';
@@ -132,6 +134,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             name: _nameController.text.trim(),
             phone: _phoneController.text.trim(),
             gender: _genderController.text.trim(),
+            avatar: _avatar,
             age: age,
             available: false,
             location: LocationModel(
@@ -142,8 +145,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
             fcmToken: "testWorker1fcmToken",
             isVerified: false,
             isActive: false,
-            subserviceIds: _selectedSubServicesList!.map((e) => e.id).toList(),
-            serviceIds: _selectedServicesList!.map((e) => e.id).toList(),
+            subserviceIds: _selectedSubServicesList.map((e) => e.id).toList(),
+            serviceIds: _selectedServicesList.map((e) => e.id).toList(),
           );
           context.read<SignUpBloc>().add(
               SignUpRequired(worker: user, password: _passwordController.text));
@@ -340,8 +343,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 
-  List<ServiceModel>? _selectedServicesList;
-  List<SubserviceModel>? _selectedSubServicesList;
+  List<ServiceModel> _selectedServicesList = [];
+  List<SubserviceModel> _selectedSubServicesList = [];
   List<ServiceModel> _allServicesList = [];
   List<SubserviceModel> _allSubservicesList = [];
   Position _position = Position(
@@ -356,22 +359,72 @@ class _SignUpScreenState extends State<SignUpScreen> {
     speed: 0.0,
     speedAccuracy: 0.0,
   );
+  String _avatar = QuikAssetConstants.placeholderImage;
+  Future<void> handleImagePickingAndUploadingFromGallery() async {
+    final image = await MediaService.pickImage();
+    if (image != null) {
+      //!! GIVE SUITABLE NAME TO STORAGE SERVICE
+      _avatar =
+          await FirebaseStorageService.uploadImage(image, '${DateTime.now()}');
+      setState(() {});
+    }
+  }
+
+  Future<void> handleImagePickingAndUploadingFromCamera() async {
+    final image = await MediaService.pickImageFromCamera();
+    if (image != null) {
+      //!! GIVE SUITABLE NAME TO STORAGE SERVICE
+      _avatar =
+          await FirebaseStorageService.uploadImage(image, '${DateTime.now()}');
+      setState(() {});
+    }
+  }
+
   Pages buildAddDetails() {
     return Pages(
         formKey: _workerDetailsProfileFormKey,
         showLogo: false,
-        pageController: pageController, // Added pageController here
+        pageController: pageController,
         onButtonPressed: () async {
           if (_workerDetailsProfileFormKey.currentState!.validate()) {
-            if (await Permission.location.serviceStatus.isEnabled) {
-              _position = await Geolocator.getCurrentPosition(
-                  desiredAccuracy: LocationAccuracy.high);
-            } else {
-              await Permission.location.request();
+            bool serviceEnabled;
+            LocationPermission permissionGranted;
+
+            serviceEnabled = await Geolocator.isLocationServiceEnabled();
+            if (!serviceEnabled) {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Please enable location services'),
+            ),
+          );
+              }
+              return;
             }
+
+            permissionGranted = await Geolocator.checkPermission();
+            if (permissionGranted == LocationPermission.denied) {
+              permissionGranted = await Geolocator.requestPermission();
+              if (permissionGranted != LocationPermission.always &&
+                  permissionGranted != LocationPermission.whileInUse) {
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Location permission is denied'),
+                    ),
+                  );
+                }
+                return;
+              }
+            }
+
+            Position position = await Geolocator.getCurrentPosition(
+                desiredAccuracy: LocationAccuracy.high);
+            context.read<WorkerBloc>().add(UpdateLocation(LocationModel(
+                latitude: position.latitude, longitude: position.longitude)));
             bool isValid = true;
-            for (var service in _selectedServicesList!) {
-              if (!_selectedSubServicesList!
+            for (var service in _selectedServicesList) {
+              if (!_selectedSubServicesList
                   .any((subservice) => subservice.serviceId == service.id)) {
                 isValid = false;
                 break;
@@ -394,6 +447,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
         color: Colors.teal,
         buttonText: "Profile Info",
         children: [
+          QuikSpacing.vS24(),
+          ClipOval(
+            child: Image.network(
+              _avatar,
+              height: 150,
+              width: 150,
+              fit: BoxFit.cover,
+            ),
+          ),
+          QuikSpacing.vS12(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              ElevatedButton(
+                onPressed: () => handleImagePickingAndUploadingFromGallery(),
+                child: const Text(
+                  'Select from Gallery',
+                  style: chatSubTitleRead,
+                ),
+              ),
+              ElevatedButton(
+                onPressed: () => handleImagePickingAndUploadingFromCamera(),
+                child: const Text(
+                  'Take a Photo',
+                  style: chatSubTitleRead,
+                ),
+              ),
+            ],
+          ),
           QuikSpacing.vS24(),
           BlocConsumer<ServiceAndSubserviceListBloc,
               ServiceAndSubserviceListState>(
@@ -449,9 +531,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       itemsTextStyle: chatSubTitleRead,
                       selectedItemsTextStyle: chatSubTitleRead,
                       items: _allSubservicesList
-                          .where((subservice) => (_selectedServicesList ?? [])
-                              .any((service) =>
-                                  service.id == subservice.serviceId))
+                          .where((subservice) => (_selectedServicesList).any(
+                              (service) => service.id == subservice.serviceId))
                           .map((subservice) => MultiSelectItem<SubserviceModel>(
                               subservice, subservice.name))
                           .toList(),

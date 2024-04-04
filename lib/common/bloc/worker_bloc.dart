@@ -20,10 +20,11 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     on<UpdatePincode>(_onUpdatePincode);
     on<ResetWorker>(_onResetWorker);
     on<UpdateLocation>(_onUpdateLocation);
+    on<FetchInitiated>(_onFetchInitiated);
 
     _userSubscription = firebaseUserRepo.user.listen((user) {
       if (user != null) {
-      add(FetchWorker());
+        add(FetchWorker());
       }
     });
   }
@@ -60,13 +61,20 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     return super.close();
   }
 
-FutureOr<void> _onUpdateLocation(UpdateLocation event, Emitter<WorkerState> emit) async {
-  emit(LocationUpdating());
-  final String workerId = await firebaseUserRepo.getCurrentUserId();
-  final result = await workerRepository.updateWorkerLocation(workerId: workerId, location: event.newLocation);
-  result.fold(
-    (error) => emit(LocationUpdatedError(error: error)),
-    (worker) => add(FetchWorker()),
-  );
-}
+  FutureOr<void> _onUpdateLocation(
+      UpdateLocation event, Emitter<WorkerState> emit) async {
+    emit(LocationUpdating());
+    final String workerId = await firebaseUserRepo.getCurrentUserId();
+    final result = await workerRepository.updateWorkerLocation(
+        workerId: workerId, location: event.newLocation);
+    result.fold((error) => emit(LocationUpdatedError(error: error)), (worker) {
+      emit(LocationUpdatedSuccess());
+      add(FetchWorker());
+    });
+  }
+
+  FutureOr<void> _onFetchInitiated(
+      FetchInitiated event, Emitter<WorkerState> emit) {
+    emit(WorkerLoading());
+  }
 }

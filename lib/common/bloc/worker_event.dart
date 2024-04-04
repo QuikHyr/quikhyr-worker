@@ -25,4 +25,6 @@ class AddWorker extends WorkerEvent {
 
 class FetchWorker extends WorkerEvent {}
 
+class FetchInitiated extends WorkerEvent {}
+
 class ResetWorker extends WorkerEvent {}
