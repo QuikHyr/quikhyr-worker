@@ -18,6 +18,7 @@ import 'package:quikhyr_worker/features/home/presentation/screens/home/home_scre
 import 'package:quikhyr_worker/features/home/presentation/screens/home_detail/home_detail_screen.dart';
 import 'package:quikhyr_worker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:quikhyr_worker/main_wrapper.dart';
+import 'package:quikhyr_worker/models/chat_list_model.dart';
 import 'package:quikhyr_worker/models/client_model.dart';
 
 abstract class AppRouter {
@@ -188,7 +189,7 @@ abstract class AppRouter {
                             CustomTransitionPage<void>(
                           // key: state.pageKey,
                           child: ChatConversationScreen(
-                            client: state.extra as ClientModel,
+                            client: state.extra as ChatListModel,
                           ),
                           transitionsBuilder:
                               (context, animation, secondaryAnimation, child) =>

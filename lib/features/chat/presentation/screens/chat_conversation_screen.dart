@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
 import 'package:quikhyr_worker/features/chat/presentation/components/chat_messages.dart';
 import 'package:quikhyr_worker/features/chat/presentation/components/chat_text_field.dart';
-import 'package:quikhyr_worker/models/client_model.dart';
+import 'package:quikhyr_worker/models/chat_list_model.dart';
 
 class ChatConversationScreen extends StatefulWidget {
-  final ClientModel client;
+  final ChatListModel client;
   const ChatConversationScreen({super.key, required this.client});
 
   @override

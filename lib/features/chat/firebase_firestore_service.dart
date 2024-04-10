@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:quikhyr_worker/models/chat_list_model.dart';
 import 'package:quikhyr_worker/models/chat_message_model.dart';
-import 'package:quikhyr_worker/models/client_model.dart';
 import 'firebase_storage_service.dart';
 
 class FirebaseFirestoreService {
@@ -86,15 +86,15 @@ class FirebaseFirestoreService {
           .doc(FirebaseAuth.instance.currentUser!.uid)
           .update(data);
 
-  static Future<List<ClientModel>> searchUser(
+  static Future<List<ChatListModel>> searchUser(
       String name) async {
     final snapshot = await FirebaseFirestore.instance
-        .collection('workers')
+        .collection('clients')
         .where("name", isGreaterThanOrEqualTo: name)
         .get();
 
     return snapshot.docs
-        .map((doc) => ClientModel.fromMap(doc.data()))
+        .map((doc) => ChatListModel.fromMap(doc.data()))
         .toList();
   }
 }
