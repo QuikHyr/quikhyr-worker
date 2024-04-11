@@ -42,13 +42,17 @@ abstract class AppRouter {
     debugLogDiagnostics: true,
     redirect: (context, state) async {
       final status = context.read<AuthenticationBloc>().state.status;
-      if(state.matchedLocation == QuikRoutes.signUpPath || state.matchedLocation == QuikRoutes.signInPath || state.matchedLocation == QuikRoutes.welcomePath || state.matchedLocation == QuikRoutes.splashPath){
-        if(status == AuthenticationStatus.registered){
+      if (state.matchedLocation == QuikRoutes.signUpPath ||
+          state.matchedLocation == QuikRoutes.signInPath ||
+          state.matchedLocation == QuikRoutes.welcomePath ||
+          state.matchedLocation == QuikRoutes.splashPath) {
+        if (status == AuthenticationStatus.registered) {
           return QuikRoutes.homePath;
         }
         return null;
       }
-      if (status == AuthenticationStatus.unknown || status == AuthenticationStatus.unauthenticated){
+      if (status == AuthenticationStatus.unknown ||
+          status == AuthenticationStatus.unauthenticated) {
         return QuikRoutes.welcomePath;
       }
       // if (status == AuthenticationStatus.registered) {
@@ -182,27 +186,27 @@ abstract class AppRouter {
                         ),
                     routes: [
                       GoRoute(
-                        parentNavigatorKey: _rootNavigatorKey,
-                        path: QuikRoutes.chatConversationPath,
-                        name: QuikRoutes.chatConversationName,
-                        pageBuilder: (context, state) =>
-                            CustomTransitionPage<void>(
-                          // key: state.pageKey,
-                          child: ChatConversationScreen(
-                            client: state.extra as ChatListModel,
-                          ),
-                          transitionsBuilder:
-                              (context, animation, secondaryAnimation, child) =>
+                          parentNavigatorKey: _rootNavigatorKey,
+                          path: '${QuikRoutes.chatConversationPath}:clientId',
+                          name: QuikRoutes.chatConversationName,
+                          pageBuilder: (context, state) {
+                            return CustomTransitionPage<void>(
+                              // key: state.pageKey,
+                              child: ChatConversationScreen(
+                                clientId: state.pathParameters['clientId'] ?? '-99',
+                              ),
+                              transitionsBuilder: (context, animation,
+                                      secondaryAnimation, child) =>
                                   SlideTransition(
-                            position: Tween<Offset>(
-                              begin: const Offset(
-                                  -1, 0), // Modified: Start from left (-1, 0)
-                              end: Offset.zero,
-                            ).animate(animation),
-                            child: child,
-                          ),
-                        ),
-                      ),
+                                position: Tween<Offset>(
+                                  begin: const Offset(-1,
+                                      0), // Modified: Start from left (-1, 0)
+                                  end: Offset.zero,
+                                ).animate(animation),
+                                child: child,
+                              ),
+                            );
+                          }),
                     ]),
               ],
             ),

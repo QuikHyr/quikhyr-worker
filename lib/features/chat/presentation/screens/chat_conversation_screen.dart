@@ -6,22 +6,22 @@ import 'package:quikhyr_worker/features/chat/presentation/components/chat_text_f
 import 'package:quikhyr_worker/models/chat_list_model.dart';
 
 class ChatConversationScreen extends StatefulWidget {
-  final ChatListModel client;
-  const ChatConversationScreen({super.key, required this.client});
+  final String clientId;
+  const ChatConversationScreen({super.key, required this.clientId});
 
   @override
   State<ChatConversationScreen> createState() => _ChatConversationScreenState();
 }
 
 class _ChatConversationScreenState extends State<ChatConversationScreen> {
-  
   @override
   void initState() {
     Provider.of<FirebaseProvider>(context, listen: false)
-      .getMessages(widget.client.id);
+      ..getClientById(widget.clientId)
+      ..getMessages(widget.clientId);
     super.initState();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -30,10 +30,10 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(children: [
             ChatMessages(
-              receiverId: widget.client.id,
+              receiverId: widget.clientId,
             ),
             ChatTextField(
-              receiverId: widget.client.id,
+              receiverId: widget.clientId,
             )
           ]),
         ));
@@ -41,15 +41,17 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
 
   AppBar _buildAppBar() {
     return AppBar(
-      title: Row(
-        children: [
-          CircleAvatar(
-            backgroundImage: NetworkImage(widget.client.avatar),
-          ),
-          const SizedBox(width: 10),
-          Text(widget.client.name),
-        ],
-      ),
-    );
+        title: Consumer<FirebaseProvider>(
+            builder: (context, value, child) => value.user != null
+                ? Row(
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: NetworkImage(value.user!.avatar),
+                      ),
+                      const SizedBox(width: 10),
+                      Text(value.user!.name),
+                    ],
+                  )
+                : const SizedBox()));
   }
 }

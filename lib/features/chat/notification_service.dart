@@ -132,7 +132,7 @@ class NotificationsService {
       await Navigator.of(context).push(
         MaterialPageRoute(
           builder: (_) =>
-              ChatConversationScreen(client: message.data['senderId']),
+              ChatConversationScreen(clientId: message.data['senderId']),
         ),
       );
     });

@@ -13,6 +13,7 @@ import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 import 'package:quikhyr_worker/common/widgets/gradient_separator.dart';
 import 'package:quikhyr_worker/common/widgets/quik_search_bar.dart';
+import 'package:quikhyr_worker/features/chat/firebase_firestore_service.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
 import 'package:quikhyr_worker/models/chat_list_model.dart';
 import 'package:quikhyr_worker/models/chat_message_model.dart';
@@ -24,7 +25,7 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends State<ChatScreen> {
+class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   TextEditingController searchController = TextEditingController();
   List<ChatListModel> filteredClients = [];
   List<ChatListModel> allClients = [];
@@ -65,15 +66,36 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  // @override
-  // void initState() {
-  //   Provider.of<FirebaseProvider>(context, listen: false)
-  //       .getAllClientsWithLastMessage();
-  //   super.initState();
-  // }
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+
+    switch (state) {
+      case AppLifecycleState.resumed:
+        FirebaseFirestoreService.updateUserData({
+          'isOnline': true,
+        });
+        break;
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.paused:
+      case AppLifecycleState.detached:
+        FirebaseFirestoreService.updateUserData({
+          'isOnline': false,
+        });
+        break;
+      default:
+    }
+  }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     searchController.dispose();
     super.dispose();
   }
@@ -211,6 +233,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                         MessageType.text
                                     ? Text(
                                         clientsToShow[index].lastMessage,
+                                        overflow: TextOverflow.ellipsis,
                                         style: chatSubTitle,
                                       )
                                     : const Text(
@@ -225,7 +248,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 onTap: () {
                                   GoRouter.of(context).pushNamed(
                                       QuikRoutes.chatConversationName,
-                                      extra: clientsToShow[index]);
+                                      pathParameters: {
+                                        'clientId': clientsToShow[index].id
+                                      });
                                 },
                               )
                             : const SizedBox();

@@ -12,7 +12,7 @@ class FirebaseProvider extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
 
   List<ChatListModel> users = [];
-  ChatListModel? user;
+  ClientModel? user;
   List<ChatMessageModel> messages = [];
   List<ChatListModel> search = [];
 
@@ -72,13 +72,13 @@ Stream<List<ChatListModel>> getAllClientsWithLastMessageStream() {
 
 
 
-  ChatListModel? getWorkerById(String userId) {
+  ClientModel? getClientById(String userId) {
     FirebaseFirestore.instance
         .collection('clients')
         .doc(userId)
         .snapshots(includeMetadataChanges: true)
         .listen((user) {
-      this.user = ChatListModel.fromMap(user.data()!);
+      this.user = ClientModel.fromMap(user.data()!);
       notifyListeners();
     });
     return user;
