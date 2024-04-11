@@ -1,8 +1,10 @@
 import 'dart:typed_data';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/features/chat/firebase_firestore_service.dart';
 import 'package:quikhyr_worker/features/chat/media_service.dart';
+import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'custom_text_form_field.dart';
 
 class ChatTextField extends StatefulWidget {
@@ -15,14 +17,13 @@ class ChatTextField extends StatefulWidget {
 
 class _ChatTextFieldState extends State<ChatTextField> {
   final controller = TextEditingController();
-  // final notificationsService = NotificationsService();
+  final notificationsService = NotificationsService();
 
   Uint8List? file;
 
   @override
   void initState() {
-    // notificationsService
-    //     .getReceiverToken(widget.receiverId);
+    notificationsService.getReceiverToken(widget.receiverId);
     super.initState();
   }
 
@@ -61,7 +62,6 @@ class _ChatTextFieldState extends State<ChatTextField> {
                   _sendText(context);
                 }),
           ),
-          
         ],
       );
 
@@ -71,10 +71,10 @@ class _ChatTextFieldState extends State<ChatTextField> {
         receiverId: widget.receiverId,
         content: controller.text,
       );
-      // await notificationsService.sendNotification(
-      //   body: controller.text,
-      //   senderId: FirebaseAuth.instance.currentUser!.uid,
-      // );
+      await notificationsService.sendNotification(
+        body: controller.text,
+        senderId: FirebaseAuth.instance.currentUser!.uid,
+      );
       controller.clear();
       FocusScope.of(context).unfocus();
     }

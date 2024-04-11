@@ -18,6 +18,7 @@ import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dar
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/features/chat/firebase_storage_service.dart';
 import 'package:quikhyr_worker/features/chat/media_service.dart';
+import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/service_model.dart';
 import 'package:quikhyr_worker/models/subservices_model.dart';
@@ -35,6 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final PageController pageController = PageController();
   // int _curr = 0;
   final TextEditingController _passwordController = TextEditingController();
+  static final notifications = NotificationsService();
 
   @override
   void initState() {
@@ -755,6 +757,7 @@ class Pages extends StatelessWidget {
                       BlocListener<SignInBloc, SignInState>(
                         listener: (context, state) {
                           if (state is SignUpSuccess) {
+                            
                             context.read<AuthenticationBloc>().add(
                                 const AuthenticationCheckUserLoggedInEvent());
                             // context.read<WorkerBloc>().add(FetchWorker());

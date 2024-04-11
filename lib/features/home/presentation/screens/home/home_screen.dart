@@ -88,10 +88,10 @@ class HomeScreen extends StatelessWidget {
                           InkWell(
                             onTap: () async {
                               context.read<WorkerBloc>().add(FetchInitiated());
-                      
+
                               bool serviceEnabled;
                               LocationPermission permissionGranted;
-                      
+
                               serviceEnabled =
                                   await Geolocator.isLocationServiceEnabled();
                               if (!serviceEnabled) {
@@ -103,7 +103,7 @@ class HomeScreen extends StatelessWidget {
                                 );
                                 return;
                               }
-                      
+
                               permissionGranted =
                                   await Geolocator.checkPermission();
                               if (permissionGranted ==
@@ -116,15 +116,16 @@ class HomeScreen extends StatelessWidget {
                                         LocationPermission.whileInUse) {
                                   if (context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Location permission is denied'),
-                                ),
-                              );
+                                      const SnackBar(
+                                        content: Text(
+                                            'Location permission is denied'),
+                                      ),
+                                    );
                                   }
                                   return;
                                 }
                               }
-                      
+
                               Position position =
                                   await Geolocator.getCurrentPosition(
                                       desiredAccuracy: LocationAccuracy.high);
@@ -147,7 +148,8 @@ class HomeScreen extends StatelessWidget {
                                       ?.copyWith(fontWeight: FontWeight.w700),
                                 ),
                                 ClickableSvgIcon(
-                                    svgAsset: QuikAssetConstants.dropDownArrowSvg,
+                                    svgAsset:
+                                        QuikAssetConstants.dropDownArrowSvg,
                                     height: 18,
                                     width: 18,
                                     onTap: () {}),
@@ -178,6 +180,7 @@ class HomeScreen extends StatelessWidget {
                               fit: BoxFit.cover,
                             ),
                           ),
+                          Text(state.worker.fcmToken),
                           Text(
                             state.worker.location.toString(),
                             style: Theme.of(context).textTheme.headlineSmall,

@@ -5,7 +5,9 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
+import 'package:quikhyr_worker/common/quik_routes.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_conversation_screen.dart';
 
 
@@ -19,7 +21,7 @@ const channel = AndroidNotificationChannel(
 
 class NotificationsService {
   static const key =
-      'AAAAEqUOTOQ:APA91bFpNSEt_rnhIdc0IRpIUeZM1USeFDSh6AALHKXNsiJwrQH_rPV8qvp9-TsDTnrat8iKdPZiyyR5AHDSVF5SzsGpwWqeJSKT_0FFf0eEmI6uOQ3tSyHnlAwAq1TC253BBiui2olI';
+      'AAAAkTLRTRc:APA91bFxWxSHRNz727vGSWXat7DKWqoDHE8e7ph9yh0E2HFnLKGNcSZ5zJjsCZB_HbiPG2U2ZEYGnpj0-Ue0AvRygt-SZ4ncmcCNe1LlsfmduDUQYc51m-P7Ro_FLG8iKmW4Rw9uLEMT';
 
   final flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
@@ -109,32 +111,33 @@ class NotificationsService {
 
   Future<void> _saveToken(String token) async =>
       await FirebaseFirestore.instance
-          .collection('users')
+          .collection('workers')
           .doc(FirebaseAuth.instance.currentUser!.uid)
-          .set({'token': token}, SetOptions(merge: true));
+          .set({'fcmToken': token}, SetOptions(merge: true));
 
   String receiverToken = '';
 
   Future<void> getReceiverToken(String? receiverId) async {
     final getToken = await FirebaseFirestore.instance
-        .collection('users')
+        .collection('clients')
         .doc(receiverId)
         .get();
 
-    receiverToken = await getToken.data()!['token'];
+    receiverToken = await getToken.data()!['fcmToken'];
   }
 
   void firebaseNotification(context) {
     _initLocalNotification();
 
     FirebaseMessaging.onMessageOpenedApp
-        .listen((RemoteMessage message) async {
-      await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) =>
-              ChatConversationScreen(clientId: message.data['senderId']),
-        ),
-      );
+        .listen((RemoteMessage message){
+      // await Navigator.of(context).push(
+      //   MaterialPageRoute(
+      //     builder: (_) =>
+      //         ChatConversationScreen(clientId: message.data['senderId']),
+      //   ),
+      // );
+      GoRouter.of(context).goNamed(QuikRoutes.chatConversationName, pathParameters: {'clientId': message.data['senderId']});
     });
 
     FirebaseMessaging.onMessage

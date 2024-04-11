@@ -16,61 +16,79 @@ class FirebaseProvider extends ChangeNotifier {
   List<ChatMessageModel> messages = [];
   List<ChatListModel> search = [];
 
-Stream<List<ChatListModel>> getAllClientsWithLastMessageStream() {
-  // Create a stream controller
-  StreamController<List<ChatListModel>> streamController = StreamController();
+  Stream<List<ChatListModel>> getAllClientsWithLastMessageStream() {
+    // Create a stream controller
+    StreamController<List<ChatListModel>> streamController = StreamController();
 
-  FirebaseFirestore.instance.collection('clients').snapshots().listen((clientSnapshot) {
-    clientSnapshot.docs.forEach((doc) {
-      var clientData = doc.data() as Map<String, dynamic>?;
+    FirebaseFirestore.instance.collection('clients').snapshots().listen(
+      (clientSnapshot) {
+        clientSnapshot.docs.forEach((doc) {
+          var clientData = doc.data() as Map<String, dynamic>?;
 
-      if (clientData != null) {
-        // Listen to the last message for this client in real-time
-        FirebaseFirestore.instance
-            .collection('workers')
-            .doc(FirebaseAuth.instance.currentUser!.uid)
-            .collection('chat').doc(doc.id).collection('messages')
-            .orderBy('sentTime', descending: true)
-            .limit(1)
-            .snapshots().listen((messageSnapshot) {
-          if (messageSnapshot.docs.isNotEmpty) {
-            var messageData = messageSnapshot.docs.first.data() as Map<String, dynamic>;
-            String lastMessage = messageData['content'] ?? '';
-            DateTime sentTime = (messageData['sentTime'] as Timestamp).toDate();
-            MessageType messageType = stringToMessageType(messageData['messageType']);
+          if (clientData != null) {
+            // Listen to the last message for this client in real-time
+            FirebaseFirestore.instance
+                .collection('workers')
+                .doc(FirebaseAuth.instance.currentUser!.uid)
+                .collection('chat')
+                .doc(doc.id)
+                .collection('messages')
+                .orderBy('sentTime', descending: true)
+                .limit(1)
+                .snapshots()
+                .listen(
+              (messageSnapshot) {
+                if (messageSnapshot.docs.isNotEmpty) {
+                  var messageData = messageSnapshot.docs.first.data();
 
-            // Construct the ChatListModel
-            ChatListModel clientWithLastMessage = ChatListModel(
-              name: clientData['name'],
-              id: doc.id,
-              isVerified: clientData['isVerified'] ?? false,
-              isActive: clientData['isActive'] ?? false,
-              avatar: clientData['avatar'] ?? '',
-              lastMessage: lastMessage,
-              sentTime: sentTime,
-              messageType: messageType,
+                  String lastMessage = messageData['content'] ?? '';
+                  DateTime sentTime =
+                      (messageData['sentTime'] as Timestamp).toDate();
+                  MessageType messageType =
+                      stringToMessageType(messageData['messageType']);
+
+                  // Construct the ChatListModel
+                  ChatListModel clientWithLastMessage = ChatListModel(
+                    name: clientData['name'],
+                    id: doc.id,
+                    isVerified: clientData['isVerified'] ?? false,
+                    isActive: clientData['isActive'] ?? false,
+                    avatar: clientData['avatar'] ?? '',
+                    lastMessage: lastMessage,
+                    sentTime: sentTime,
+                    messageType: messageType,
+                  );
+
+                  // Update the specific client with the new last message
+                  int index = users.indexWhere((user) => user.id == doc.id);
+                  if (index != -1) {
+                    users[index] = clientWithLastMessage;
+                  } else {
+                    users.add(clientWithLastMessage);
+                  }
+
+                  // Add the updated list of clients with the last message to the stream
+                  streamController.add(users);
+                }
+              },
+              // Handle errors in the inner stream
+              onError: (error) {
+                debugPrint('Error in inner stream: $error');
+                streamController.addError(error);
+              },
             );
-
-            // Update the specific client with the new last message
-            int index = users.indexWhere((user) => user.id == doc.id);
-            if (index != -1) {
-              users[index] = clientWithLastMessage;
-            } else {
-              users.add(clientWithLastMessage);
-            }
-
-            // Add the updated list of clients with the last message to the stream
-            streamController.add(users);
           }
         });
-      }
-    });
-  });
+      },
+      // Handle errors in the outer stream
+      onError: (error) {
+        debugPrint('Error in outer stream: $error');
+        streamController.addError(error);
+      },
+    );
 
-  return streamController.stream;
-}
-
-
+    return streamController.stream;
+  }
 
   ClientModel? getClientById(String userId) {
     FirebaseFirestore.instance
@@ -83,7 +101,6 @@ Stream<List<ChatListModel>> getAllClientsWithLastMessageStream() {
     });
     return user;
   }
-
 
   List<ChatMessageModel> getMessages(String receiverId) {
     FirebaseFirestore.instance

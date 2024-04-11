@@ -15,6 +15,7 @@ import 'package:quikhyr_worker/common/widgets/gradient_separator.dart';
 import 'package:quikhyr_worker/common/widgets/quik_search_bar.dart';
 import 'package:quikhyr_worker/features/chat/firebase_firestore_service.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
+import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'package:quikhyr_worker/models/chat_list_model.dart';
 import 'package:quikhyr_worker/models/chat_message_model.dart';
 
@@ -26,6 +27,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
+  final notificationService = NotificationsService();
   TextEditingController searchController = TextEditingController();
   List<ChatListModel> filteredClients = [];
   List<ChatListModel> allClients = [];
@@ -70,6 +72,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    notificationService.firebaseNotification(context);
   }
 
   @override
@@ -79,14 +82,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     switch (state) {
       case AppLifecycleState.resumed:
         FirebaseFirestoreService.updateUserData({
-          'isOnline': true,
+          'isActive': true,
         });
         break;
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
         FirebaseFirestoreService.updateUserData({
-          'isOnline': false,
+          'isActive': false,
         });
         break;
       default:
@@ -175,8 +178,14 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       filteredClients.isEmpty && searchController.text.isEmpty
                           ? allClients
                           : filteredClients;
+                  // debugPrint("All Clients: $allClients");
+                  // debugPrint('Clients to Show: $clientsToShow');
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    if (snapshot.hasData && snapshot.data!.isEmpty) {
+                      return const Center(child: Text('No Chats Yet'));
+                    } else {
+                      return const Center(child: CircularProgressIndicator());
+                    }
                   } else if (snapshot.hasError) {
                     return const Center(child: Text('An error occurred'));
                   } else if (!snapshot.hasData) {

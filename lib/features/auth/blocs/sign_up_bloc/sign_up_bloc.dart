@@ -3,12 +3,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentication_bloc.dart';
 import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
+import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
 part 'sign_up_event.dart';
 part 'sign_up_state.dart';
 
 class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final AuthenticationBloc _authenticationBloc;
+  final NotificationsService _notificationsService = NotificationsService();
   final FirebaseUserRepo _workerRepository;
 
   SignUpBloc(
@@ -28,12 +30,12 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
               "${isWorkerCreationSuccess.toString()} isWorkerCreationSuccess");
           //           SharedPreferences prefs = await SharedPreferences.getInstance();
           // await prefs.setBool('isRegistered${event.worker.id}', true);
+          await _notificationsService.requestPermission();
+          await _notificationsService.getToken();
           emit(const SignUpSuccess());
           _authenticationBloc.add(const AuthenticationCheckUserLoggedInEvent());
-
         } else {
           emit(const SignUpFailure('Worker creation failed'));
-          
         }
       } catch (e) {
         emit(SignUpFailure(e.toString()));
