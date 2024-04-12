@@ -11,6 +11,8 @@ import 'package:quikhyr_worker/features/auth/data/data_provider/service_and_subs
 import 'package:quikhyr_worker/features/auth/data/repository/firebase_user_repo.dart';
 import 'package:quikhyr_worker/features/auth/data/repository/service_and_subservice_repo.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
+import 'package:quikhyr_worker/features/notification/cubit/notification_cubit.dart';
+import 'package:quikhyr_worker/features/notification/repository/notification_repo.dart';
 import 'package:quikhyr_worker/my_app_view.dart';
 
 class MyApp extends StatelessWidget {
@@ -20,14 +22,26 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<NotificationRepo>(
+            create: (context) => NotificationRepo()),
         RepositoryProvider<FirebaseUserRepo>(
           create: (context) => FirebaseUserRepo(),
         ),
         RepositoryProvider<WorkerRepo>(create: (context) => WorkerRepo()),
-        RepositoryProvider<ServiceAndSubserviceRepo>(create: (context) => ServiceAndSubserviceRepo(dataProvider: ServiceAndSubservicesDataProvider()),),
+        RepositoryProvider<ServiceAndSubserviceRepo>(
+          create: (context) => ServiceAndSubserviceRepo(
+              dataProvider: ServiceAndSubservicesDataProvider()),
+        ),
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider<NotificationCubit>(
+            create: (context) {
+              return NotificationCubit(
+                RepositoryProvider.of<NotificationRepo>(context),
+              );
+            },
+          ),
           BlocProvider<AuthenticationBloc>(
               lazy: false,
               create: (context) {
@@ -55,11 +69,11 @@ class MyApp extends StatelessWidget {
             final firebaseUserRepo = context.read<FirebaseUserRepo>();
             return WorkerBloc(
                 workerRepository: workerRepo,
-                firebaseUserRepo: firebaseUserRepo)
-              ;
+                firebaseUserRepo: firebaseUserRepo);
           }),
           BlocProvider<ServiceAndSubserviceListBloc>(create: (context) {
-            final serviceAndSubserviceRepo = context.read<ServiceAndSubserviceRepo>();
+            final serviceAndSubserviceRepo =
+                context.read<ServiceAndSubserviceRepo>();
             return ServiceAndSubserviceListBloc(serviceAndSubserviceRepo);
           }),
         ],

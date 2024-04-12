@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:quikhyr_worker/common/quik_routes.dart';
-import 'package:quikhyr_worker/features/chat/presentation/screens/chat_conversation_screen.dart';
 
 
 const channel = AndroidNotificationChannel(
@@ -126,11 +125,11 @@ class NotificationsService {
     receiverToken = await getToken.data()!['fcmToken'];
   }
 
-  void firebaseNotification(context) {
+  void firebaseNotification(context) async{
     _initLocalNotification();
 
     FirebaseMessaging.onMessageOpenedApp
-        .listen((RemoteMessage message){
+        .listen((RemoteMessage message) async{
       // await Navigator.of(context).push(
       //   MaterialPageRoute(
       //     builder: (_) =>

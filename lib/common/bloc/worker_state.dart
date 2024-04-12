@@ -12,7 +12,6 @@ final class WorkerLoaded extends WorkerState {
 
   WorkerLoaded({required this.worker});
 }
-
 final class WorkerError extends WorkerState {
   final String error;
 

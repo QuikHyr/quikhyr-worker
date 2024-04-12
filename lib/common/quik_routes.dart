@@ -12,6 +12,8 @@ class QuikRoutes {
   static const String welcomePath = '/welcome';
   static const String splashPath = '/splash';
   static const String homeName = 'Home';
+   static const notificationPath = '/notification';
+
 
   static const String homeDetailsName = 'HomeDetail';
   static const String bookingName = 'Booking';
@@ -24,4 +26,5 @@ class QuikRoutes {
   static const String signUpName = 'SignUp';
   static const String welcomeName = 'Welcome';
   static const String splashName = 'Splash';
+   static const notificationName = 'notificationName';
 }

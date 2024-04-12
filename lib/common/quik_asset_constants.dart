@@ -44,4 +44,11 @@ class QuikAssetConstants {
   static const String dropDownArrowSvg = 'assets/icons/drop_down_arrow.svg';
   static const String callingSvg = 'assets/icons/calling.svg';
   static const String cameraSvg = 'assets/icons/camera.svg';
+    static const String accountSvg = 'assets/icons/account.svg';
+  static const String blockSvg = 'assets/icons/block.svg';
+  static const String bugSvg = 'assets/icons/bug.svg';
+  static const String faqSvg = 'assets/icons/faq.svg';
+  static const String notificationsSvg = 'assets/icons/notifications.svg';
+  static const String privacySvg = 'assets/icons/privacy.svg';
+  static const String termsAndConditionsSvg = 'assets/icons/terms_and_conditions.svg';
 }

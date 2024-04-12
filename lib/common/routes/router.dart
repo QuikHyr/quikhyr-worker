@@ -16,6 +16,7 @@ import 'package:quikhyr_worker/features/chat/presentation/screens/chat_screen.da
 import 'package:quikhyr_worker/features/feedback/presentation/screens/feedback_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home/home_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home_detail/home_detail_screen.dart';
+import 'package:quikhyr_worker/features/notification/presentation/notification_screen.dart';
 import 'package:quikhyr_worker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:quikhyr_worker/main_wrapper.dart';
 import 'package:quikhyr_worker/models/chat_list_model.dart';
@@ -193,7 +194,8 @@ abstract class AppRouter {
                             return CustomTransitionPage<void>(
                               // key: state.pageKey,
                               child: ChatConversationScreen(
-                                clientId: state.pathParameters['clientId'] ?? '-99',
+                                clientId:
+                                    state.pathParameters['clientId'] ?? '-99',
                               ),
                               transitionsBuilder: (context, animation,
                                       secondaryAnimation, child) =>
@@ -251,6 +253,13 @@ abstract class AppRouter {
             ),
           ]),
       GoRoute(
+          path: QuikRoutes.notificationPath,
+          name: QuikRoutes.notificationName,
+          pageBuilder: (context, state) => const NoTransitionPage(
+                child: NotificationScreen(),
+              )),
+
+      GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: QuikRoutes.signUpPath,
         name: QuikRoutes.signUpName,
@@ -287,6 +296,7 @@ abstract class AppRouter {
 
   static GoRouter get router => _router;
 }
+
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';

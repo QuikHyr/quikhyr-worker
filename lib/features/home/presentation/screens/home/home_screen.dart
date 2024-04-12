@@ -58,7 +58,7 @@ class HomeScreen extends StatelessWidget {
               ClickableSvgIcon(
                   svgAsset: QuikAssetConstants.bellNotificationActiveSvg,
                   onTap: () {
-                    //HANDLE GO TO NOTIFICATIONS
+                    context.pushNamed(QuikRoutes.notificationName);
                   }),
               QuikSpacing.hS10(),
               ClickableSvgIcon(
