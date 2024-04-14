@@ -104,6 +104,15 @@ const TextStyle chatSubTitle = TextStyle(
   height: 1.0,
 );
 
+const TextStyle descriptionTextStyle = TextStyle(
+  color: placeHolderText,
+  letterSpacing: 0.5,
+  fontFamily: 'Trap',
+  fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  height: 1.28,
+);
 const TextStyle chatSubTitleRead = TextStyle(
   color: placeHolderText,
   fontFamily: 'Trap',

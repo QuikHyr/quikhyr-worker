@@ -4,6 +4,7 @@ class MyTextField extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final bool obscureText;
+  final Color? enabledBorderColor;
   final TextInputType keyboardType;
   final Widget? suffixIcon;
   final VoidCallback? onTap;
@@ -19,6 +20,7 @@ class MyTextField extends StatefulWidget {
     required this.hintText,
     required this.obscureText,
     required this.keyboardType,
+    this.enabledBorderColor,
     this.suffixIcon,
     this.onTap,
     this.prefixIcon,
@@ -42,7 +44,8 @@ class _MyTextFieldState extends State<MyTextField> {
       child: Focus(
         onFocusChange: (hasFocus) {
           setState(() {
-            backgroundColor = hasFocus ? Colors.transparent : const Color(0xFF313131);
+            backgroundColor =
+                hasFocus ? Colors.transparent : const Color(0xFF313131);
           });
         },
         child: Builder(
@@ -71,11 +74,16 @@ class _MyTextFieldState extends State<MyTextField> {
                   prefixIcon: widget.prefixIcon,
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Colors.transparent),
+                    borderSide: BorderSide(
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
+                    borderSide: BorderSide(
+                      color: widget.enabledBorderColor ??
+                          Theme.of(context).colorScheme.primary,
+                    ),
                   ),
                   fillColor: Colors.transparent,
                   filled: true,
@@ -90,13 +98,13 @@ class _MyTextFieldState extends State<MyTextField> {
                     height: 1,
                   ),
                   labelStyle: const TextStyle(
-  color: Color.fromRGBO(233, 234, 236, 0.50),
-  fontFamily: 'Trap',
-  fontSize: 13,
-  fontStyle: FontStyle.normal,
-  fontWeight: FontWeight.w600,
-  height: 1,
-),
+                    color: Color.fromRGBO(233, 234, 236, 0.50),
+                    fontFamily: 'Trap',
+                    fontSize: 13,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w600,
+                    height: 1,
+                  ),
                   errorText: widget.errorMsg,
                 ),
               ),

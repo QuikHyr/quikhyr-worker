@@ -149,7 +149,7 @@ class NotificationsService {
       {required String body,
       required String senderId}) async {
     try {
-      await http.post(
+      final response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
         headers: <String, String>{
           'Content-Type': 'application/json',
@@ -169,6 +169,7 @@ class NotificationsService {
           }
         }),
       );
+      debugPrint(response.body);
     } catch (e) {
       debugPrint(e.toString());
     }

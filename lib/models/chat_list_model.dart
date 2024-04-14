@@ -10,6 +10,8 @@ String messageTypeToString(MessageType type) {
       return 'text';
     case MessageType.image:
       return 'image';
+    case MessageType.booking:
+      return 'booking';
     default:
       return 'unknown';
   }
@@ -21,6 +23,8 @@ MessageType stringToMessageType(String type) {
       return MessageType.text;
     case 'image':
       return MessageType.image;
+    case 'booking':
+      return MessageType.booking;
     default:
       return MessageType.text; // default to text if type is not recognized
   }

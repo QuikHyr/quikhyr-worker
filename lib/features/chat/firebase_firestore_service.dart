@@ -41,6 +41,27 @@ class FirebaseFirestoreService {
     await _addMessageToChat(receiverId, message);
   }
 
+    static Future<void> addBookingMessage({
+    required String content,
+    required String receiverId,
+    required String unit,
+    required num pricePerUnit,
+    required DateTime timeslot,
+  }) async {
+    final message = ChatMessageModel(
+      isAccepted: false,
+      content: content,
+      sentTime: DateTime.now(),
+      receiverId: receiverId,
+      messageType: MessageType.booking,
+      senderId: FirebaseAuth.instance.currentUser!.uid,
+      unit: unit,
+      pricePerUnit: pricePerUnit,
+      timeslot: timeslot,
+    );
+    await _addMessageToChat(receiverId, message);
+  }
+
   static Future<void> addImageMessage({
     required String receiverId,
     required Uint8List file,
@@ -59,25 +80,33 @@ class FirebaseFirestoreService {
   }
 
   static Future<void> _addMessageToChat(
-    String receiverId,
-    ChatMessageModel message,
-  ) async {
-    await firestore
-        .collection('workers')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('chat')
-        .doc(receiverId)
-        .collection('messages')
-        .add(message.toJson());
+  String receiverId,
+  ChatMessageModel message,
+) async {
+  // Generate a new document ID
+  var newDocId = firestore.collection('workers').doc().id;
 
-    await firestore
-        .collection('clients')
-        .doc(receiverId)
-        .collection('chat')
-        .doc(FirebaseAuth.instance.currentUser!.uid)
-        .collection('messages')
-        .add(message.toJson());
-  }
+  // Add the message to the worker's collection using the new document ID
+  await firestore
+      .collection('workers')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('chat')
+      .doc(receiverId)
+      .collection('messages')
+      .doc(newDocId)
+      .set(message.toJson());
+
+  // Add the same message to the client's collection using the same document ID
+  await firestore
+      .collection('clients')
+      .doc(receiverId)
+      .collection('chat')
+      .doc(FirebaseAuth.instance.currentUser!.uid)
+      .collection('messages')
+      .doc(newDocId)
+      .set(message.toJson());
+}
+
 
   static Future<void> updateUserData(
           Map<String, dynamic> data) async =>
