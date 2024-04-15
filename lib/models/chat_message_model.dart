@@ -11,9 +11,10 @@ class ChatMessageModel {
   final bool? isAccepted;
   final String? unit;
   final num? pricePerUnit;
+  final String? subserviceName;
 
   const ChatMessageModel({
-
+    this.subserviceName,
     this.hasResponded,
     this.id,
     this.isAccepted,
@@ -30,6 +31,7 @@ class ChatMessageModel {
   factory ChatMessageModel.fromJson(
           Map<String, dynamic> json, String documentId) =>
       ChatMessageModel(
+        subserviceName: json['subserviceName'],
         hasResponded: json['hasResponded'],
         id: documentId,
         timeslot: json['timeslot']?.toDate(),
@@ -44,6 +46,7 @@ class ChatMessageModel {
       );
 
   Map<String, dynamic> toJson() => {
+        'subserviceName': subserviceName,
         'hasResponded': hasResponded,
         'timeslot': timeslot,
         'isAccepted': isAccepted,

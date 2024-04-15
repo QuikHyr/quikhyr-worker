@@ -5,14 +5,12 @@ import 'package:equatable/equatable.dart';
 
 class SubserviceModel extends Equatable {
   final String name;
-  final String description;
   final String serviceId;
   final String serviceName;
   final List<String> tags;
   final String id;
   const SubserviceModel({
     required this.name,
-    required this.description,
     required this.serviceId,
     required this.serviceName,
     required this.tags,
@@ -21,7 +19,6 @@ class SubserviceModel extends Equatable {
 
   SubserviceModel copyWith({
     String? name,
-    String? description,
     String? serviceId,
     String? serviceName,
     List<String>? tags,
@@ -29,7 +26,6 @@ class SubserviceModel extends Equatable {
   }) {
     return SubserviceModel(
       name: name ?? this.name,
-      description: description ?? this.description,
       serviceId: serviceId ?? this.serviceId,
       serviceName: serviceName ?? this.serviceName,
       tags: tags ?? this.tags,
@@ -40,7 +36,6 @@ class SubserviceModel extends Equatable {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'name': name,
-      'description': description,
       'serviceId': serviceId,
       'serviceName': serviceName,
       'tags': tags,
@@ -51,7 +46,6 @@ class SubserviceModel extends Equatable {
   factory SubserviceModel.fromMap(Map<String, dynamic> map) {
     return SubserviceModel(
       name: map['name'] as String,
-      description: map['description'] as String,
       serviceId: map['serviceId'] as String,
       serviceName: map['serviceName'] as String,
       tags: List<String>.from(map['tags']),
@@ -70,7 +64,6 @@ class SubserviceModel extends Equatable {
   List<Object> get props {
     return [
       name,
-      description,
       serviceId,
       serviceName,
       tags,
