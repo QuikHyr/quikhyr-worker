@@ -42,15 +42,15 @@ class FirebaseFirestoreService {
   }
 
     static Future<void> addBookingMessage({
-    required String subserviceName,
+    required String subserviceId,
     required String content,
     required String receiverId,
     required String unit,
-    required num pricePerUnit,
+    required num ratePerUnit,
     required DateTime timeslot,
   }) async {
     final message = ChatMessageModel(
-      subserviceName: subserviceName,
+      subserviceId: subserviceId,
       isAccepted: false,
       content: content,
       sentTime: DateTime.now(),
@@ -58,7 +58,7 @@ class FirebaseFirestoreService {
       messageType: MessageType.booking,
       senderId: FirebaseAuth.instance.currentUser!.uid,
       unit: unit,
-      pricePerUnit: pricePerUnit,
+      ratePerUnit: ratePerUnit,
       timeslot: timeslot,
     );
     await _addMessageToChat(receiverId, message);

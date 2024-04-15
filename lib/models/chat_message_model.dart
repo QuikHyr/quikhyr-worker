@@ -10,16 +10,16 @@ class ChatMessageModel {
   final DateTime? timeslot;
   final bool? isAccepted;
   final String? unit;
-  final num? pricePerUnit;
-  final String? subserviceName;
+  final num? ratePerUnit;
+  final String? subserviceId;
 
   const ChatMessageModel({
-    this.subserviceName,
+    this.subserviceId,
     this.hasResponded,
     this.id,
     this.isAccepted,
     this.unit,
-    this.pricePerUnit,
+    this.ratePerUnit,
     this.timeslot,
     required this.senderId,
     required this.receiverId,
@@ -31,13 +31,13 @@ class ChatMessageModel {
   factory ChatMessageModel.fromJson(
           Map<String, dynamic> json, String documentId) =>
       ChatMessageModel(
-        subserviceName: json['subserviceName'],
+        subserviceId: json['subserviceId'],
         hasResponded: json['hasResponded'],
         id: documentId,
         timeslot: json['timeslot']?.toDate(),
         isAccepted: json['isAccepted'],
         unit: json['unit'],
-        pricePerUnit: json['pricePerUnit'],
+        ratePerUnit: json['ratePerUnit'],
         receiverId: json['receiverId'],
         senderId: json['senderId'],
         sentTime: json['sentTime'].toDate(),
@@ -46,12 +46,12 @@ class ChatMessageModel {
       );
 
   Map<String, dynamic> toJson() => {
-        'subserviceName': subserviceName,
+        'subserviceId': subserviceId,
         'hasResponded': hasResponded,
         'timeslot': timeslot,
         'isAccepted': isAccepted,
         'unit': unit,
-        'pricePerUnit': pricePerUnit,
+        'ratePerUnit': ratePerUnit,
         'receiverId': receiverId,
         'senderId': senderId,
         'sentTime': sentTime,
@@ -61,7 +61,7 @@ class ChatMessageModel {
 
   @override
   String toString() {
-    return 'ChatMessageModel(senderId: $senderId, receiverId: $receiverId, content: $content, sentTime: $sentTime, messageType: $messageType, timeslot: $timeslot, isAccepted: $isAccepted, unit: $unit, pricePerUnit: $pricePerUnit)';
+    return 'ChatMessageModel(senderId: $senderId, receiverId: $receiverId, content: $content, sentTime: $sentTime, messageType: $messageType, timeslot: $timeslot, isAccepted: $isAccepted, unit: $unit, ratePerUnit: $ratePerUnit)';
   }
 }
 

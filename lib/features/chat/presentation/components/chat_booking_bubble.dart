@@ -45,7 +45,7 @@ class _BookingRequestBubbleState extends State<BookingRequestBubble> {
               ),
               const SizedBox(height: 5.0),
               Text(
-                'Price per Unit: ${widget.message.pricePerUnit.toString()}',
+                'Price per Unit: ${widget.message.ratePerUnit.toString()}',
                 style: const TextStyle(color: secondary, fontSize: 12),
               ),
               const SizedBox(height: 5.0),
