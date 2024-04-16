@@ -191,19 +191,9 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                 // Handle call button press
               },
               icon: const Icon(Icons.call)),
-          FutureBuilder(
-              future: checkHasResponded(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Icon(Icons.error);
-                } else {
-                  return IconButton(
+IconButton(
                     icon: const Icon(Icons.request_quote),
-                    onPressed: snapshot.data == true
-                        ? null
-                        : () {
+                    onPressed: () {
                             context.read<ServiceAndSubserviceListBloc>().add(
                                 GetServicesAndSubservices()); // assuming this is the event to get the list of services and subservices
                             showModalBottomSheet(
@@ -451,9 +441,7 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                               },
                             );
                           },
-                  );
-                }
-              })
+                  )
         ],
         title: Consumer<FirebaseProvider>(
             builder: (context, value, child) => value.user != null
