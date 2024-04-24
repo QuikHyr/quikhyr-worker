@@ -15,6 +15,8 @@ import 'package:quikhyr_worker/features/notification/cubit/notification_cubit.da
 import 'package:quikhyr_worker/features/notification/repository/notification_repo.dart';
 import 'package:quikhyr_worker/my_app_view.dart';
 
+import 'features/booking/cubit/booking_cubit.dart';
+
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
@@ -35,7 +37,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
+          BlocProvider(create: (context) => BookingCubit()..getBookingsById()),
           BlocProvider<NotificationCubit>(
+            lazy: false,
             create: (context) {
               return NotificationCubit(
                 RepositoryProvider.of<NotificationRepo>(context),

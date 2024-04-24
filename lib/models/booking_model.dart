@@ -1,115 +1,200 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:equatable/equatable.dart';
-import 'package:intl/intl.dart';
-import 'package:quikhyr_worker/models/location_model.dart';
+import '../common/enums/status.dart';
+import 'location_model.dart';
 
-class BookingModel extends Equatable {
-  final String clientId;
-  final DateTime dateTime;
-  final LocationModel location;
-  final String? locationName;
-  final num ratePerUnit;
-  final String status;
-  final String unit;
-  final String subserviceId;
-  final String workerId;
-  const BookingModel({
-    required this.clientId,
-    required this.dateTime,
-    required this.location,
-    required this.subserviceId,
-    this.locationName,
-    required this.ratePerUnit,
-    required this.status,
-    required this.unit,
-    required this.workerId,
+class BookingData {
+  List<Booking> currentBookings;
+  List<Booking> pastBookings;
+
+  BookingData({
+    required this.currentBookings,
+    required this.pastBookings,
   });
 
-  BookingModel copyWith({
-    String? subserviceId,
-    String? clientId,
-    DateTime? dateTime,
-    LocationModel? location,
-    String? locationName,
-    num? ratePerUnit,
-    String? status,
-    String? unit,
-    String? workerId,
-  }) {
-    return BookingModel(
-      subserviceId: subserviceId ?? this.subserviceId,
-      clientId: clientId ?? this.clientId,
-      dateTime: dateTime ?? this.dateTime,
-      location: location ?? this.location,
-      locationName: locationName ?? this.locationName,
-      ratePerUnit: ratePerUnit ?? this.ratePerUnit,
-      status: status ?? this.status,
-      unit: unit ?? this.unit,
-      workerId: workerId ?? this.workerId,
+  factory BookingData.fromJson(Map<String, dynamic> json) {
+    if (json["currentBookings"] is! List || json["pastBookings"] is! List) {
+      throw 'Invalid data format';
+    }
+
+    return BookingData(
+      currentBookings: (json["currentBookings"] as List)
+          .map((x) => Booking.fromJson(x))
+          .toList(),
+      pastBookings: (json["pastBookings"] as List)
+          .map((x) => Booking.fromJson(x))
+          .toList(),
     );
   }
 
-  String get formattedDate {
-    final DateFormat formatter = DateFormat('dd/MM/yyyy HH:mm:ss');
-    return formatter.format(dateTime);
+//   factory BookingData.fromJson(Map<String, dynamic> json) => BookingData(
+//   currentBookings: (json["currentBookings"] as List).map((x) => Booking.fromJson(x)).toList(),
+//   pastBookings: (json["pastBookings"] as List).map((x) => Booking.fromJson(x)).toList(),
+// );
+
+//   Map<String, dynamic> toJson() => {
+//         "currentBookings":
+//             List<dynamic>.from(currentBookings.map((x) => x.toJson())),
+//         "pastBookings": List<dynamic>.from(pastBookings.map((x) => x.toJson())),
+//       };
+// }
+
+// "locationName": "Nizhnesaitovo",
+// "dateTime": "16/04/2024 12:42:00",
+// "ratePerUnit": 258,
+// "unit": "hh",
+// "status": "Pending"
+}
+
+class Booking {
+  String? id;
+  String serviceName;
+  String? clientId;
+  LocationModel? location;
+  String serviceAvatar;
+  String? subserviceId;
+  String subserviceName;
+  String workerName;
+  String? workerId;
+  DateTime dateTime;
+  String unit;
+  String locationName;
+  num ratePerUnit;
+  Status status;
+
+  Booking({
+    this.id,
+    required this.serviceName,
+    this.clientId,
+    this.location,
+    required this.serviceAvatar,
+    this.subserviceId,
+    required this.subserviceName,
+    required this.workerName,
+    this.workerId,
+    required this.dateTime,
+    required this.unit,
+    required this.locationName,
+    required this.ratePerUnit,
+    required this.status,
+  });
+
+  factory Booking.fromJson(Map<String, dynamic> json) {
+    if (json['dateTime'] is! Map) {
+      throw 'Invalid dateTime format';
+    }
+
+    var dateTime = DateTime.fromMillisecondsSinceEpoch(
+        (json['dateTime']['_seconds'] as int) * 1000 +
+            (json['dateTime']['_nanoseconds'] as int) ~/ 1000000);
+
+    return Booking(
+      id: json["id"] ?? '',
+      serviceName: json["serviceName"] ?? '',
+      clientId: json["clientId"] ?? '',
+      location: LocationModel.fromMap(
+          json["location"] ?? {'latitude': 66, 'longitude': 66}),
+      serviceAvatar: json["serviceAvatar"] ?? '',
+      subserviceName: json["subserviceName"] ?? '',
+      workerName: json["workerName"] ?? '',
+      dateTime: dateTime,
+      unit: json["unit"] ?? '',
+      locationName: json["locationName"] ?? '',
+      ratePerUnit: json["ratePerUnit"] ?? 0,
+      status: Status.fromJson(json["status"] ?? 'Pending'),
+    );
   }
 
-  static DateTime parseDateTime(String dateString) {
-    return DateFormat('dd/MM/yyyy HH:mm:ss').parse(dateString);
+  Map<String, dynamic> toJson() => {
+        "serviceName": serviceName,
+        "clientId": clientId ?? '-99',
+        "location": location?.toJson(),
+        "serviceAvatar": serviceAvatar,
+        "subserviceId": subserviceId ?? '-100',
+        "subserviceName": subserviceName,
+        "workerName": workerName,
+        "workerId": workerId ?? '-200',
+        "dateTime": Timestamp.fromDate(dateTime).toString(),
+        "unit": unit,
+        "locationName": locationName,
+        "ratePerUnit": ratePerUnit,
+        "status": status.toJson(),
+      };
+}
+
+class Timestamps {
+  CreatedAt createdAt;
+  CreatedAt updatedAt;
+
+  Timestamps({
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory Timestamps.fromJson(Map<String, dynamic> json) => Timestamps(
+        createdAt: CreatedAt.fromJson(json["createdAt"]),
+        updatedAt: CreatedAt.fromJson(json["updatedAt"]),
+      );
+
+  Map<String, dynamic> toJson() => {
+        "createdAt": createdAt.toJson(),
+        "updatedAt": updatedAt.toJson(),
+      };
+
+        factory Timestamps.fromMap(Map<String, dynamic> map) {
+    return Timestamps(
+      createdAt: CreatedAt.fromMap(map['createdAt']),
+      updatedAt: CreatedAt.fromMap(map['updatedAt']),
+    );
   }
 
   Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'subserviceId': subserviceId,
-      'clientId': clientId,
-      'dateTime': formattedDate,
-      'location': location.toMap(),
-      'locationName': locationName,
-      'ratePerUnit': ratePerUnit,
-      'status': status,
-      'unit': unit,
-      'workerId': workerId,
+    return {
+      'createdAt': createdAt.toMap(),
+      'updatedAt': updatedAt.toMap(),
     };
   }
+}
 
-  factory BookingModel.fromMap(Map<String, dynamic> map) {
-    return BookingModel(
-      subserviceId: map['subserviceId'] as String,
-      clientId: map['clientId'] as String,
-      dateTime: parseDateTime(map['dateTime']),
-      location: map['location']
-          .LocationModel
-          .fromMap(map['location'] as Map<String, dynamic>),
-      locationName: map['locationName'] as String,
-      ratePerUnit: map['ratePerUnit'] as num,
-      status: map['status'] as String,
-      unit: map['unit'] as String,
-      workerId: map['workerId'] as String,
+class CreatedAt {
+  int seconds;
+  int nanoseconds;
+
+  CreatedAt({
+    required this.seconds,
+    required this.nanoseconds,
+  });
+
+  factory CreatedAt.fromJson(Map<String, dynamic> json) => CreatedAt(
+        seconds: json["_seconds"],
+        nanoseconds: json["_nanoseconds"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "_seconds": seconds,
+        "_nanoseconds": nanoseconds,
+      };
+      factory CreatedAt.fromMap(Map<String, dynamic> map) {
+    return CreatedAt(
+      seconds: map['_seconds'],
+      nanoseconds: map['_nanoseconds'],
     );
   }
 
-  String toJson() => json.encode(toMap());
+  Map<String, dynamic> toMap() {
+    return {
+      '_seconds': seconds,
+      '_nanoseconds': nanoseconds,
+    };
+  }
 
-  factory BookingModel.fromJson(String source) =>
-      BookingModel.fromMap(json.decode(source) as Map<String, dynamic>);
+    DateTime toDateTime() {
+    return DateTime.fromMillisecondsSinceEpoch(seconds * 1000 + nanoseconds ~/ 1000000);
+  }
 
-  @override
-  bool get stringify => true;
-
-  @override
-  List<Object?> get props {
-    return [
-      subserviceId,
-      clientId,
-      dateTime,
-      location,
-      locationName,
-      ratePerUnit,
-      status,
-      unit,
-      workerId,
-    ];
+  static CreatedAt fromDateTime(DateTime dateTime) {
+    int seconds = dateTime.millisecondsSinceEpoch ~/ 1000;
+    int nanoseconds = (dateTime.millisecondsSinceEpoch % 1000) * 1000000;
+    return CreatedAt(seconds: seconds, nanoseconds: nanoseconds);
   }
 }

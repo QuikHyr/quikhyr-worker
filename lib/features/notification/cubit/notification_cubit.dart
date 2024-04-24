@@ -16,4 +16,20 @@ class NotificationCubit extends Cubit<NotificationState> {
   //     (success) => emit(const NotificationSentSuccess()),
   //   );
   // }
+  void getNotifications() async {
+    emit(const NotificationLoading());
+    final result = await _notificationRepo.getNotifications();
+    result.fold(
+      (error) => emit(NotificationError(error: error)),
+      (notifications) => emit(NotificationLoaded(notifications: notifications)),
+    );
+  }
+  void sendWorkAlertRejectionBackToClient(NotificationModel notification) async {
+    emit(const NotificationSentLoading());
+    final result = await _notificationRepo.createWorkAlertRejectionBackToClient(notification);
+    result.fold(
+      (error) => emit(NotificationSentError(error: error)),
+      (success) => emit(const NotificationSentSuccess()),
+    );
+  }
 }

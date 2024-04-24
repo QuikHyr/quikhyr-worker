@@ -21,3 +21,17 @@ final class NotificationSentError extends NotificationState {
   final String error;
   const NotificationSentError({required this.error});
 }
+
+final class NotificationLoading extends NotificationState {
+  const NotificationLoading();
+}
+
+final class NotificationLoaded extends NotificationState {
+  final List<NotificationModel> notifications;
+  const NotificationLoaded({required this.notifications});
+} 
+
+final class NotificationError extends NotificationState {
+  final String error;
+  const NotificationError({required this.error});
+} 

@@ -95,10 +95,87 @@ class AppTheme {
   );
 }
 
+const TextStyle workerListNameTextStyle = TextStyle(
+  color: secondary,
+  letterSpacing: 0.5,
+  fontFamily: 'Trap',
+  fontSize: 16.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+);
+
+const TextStyle bodyLargeTextStyle = TextStyle(
+  color: secondary,
+  fontFamily: 'Trap',
+  fontSize: 14,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  height: 1.2,
+);
+const TextStyle infoText_14_400TextStyle = TextStyle(
+  color: placeHolderText,
+  fontFamily: 'Trap',
+  fontSize: 14,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  height: 1.2,
+);
+const TextStyle timeGreenTextStyle = TextStyle(
+  color: quikHyrGreen,
+  fontFamily: 'Trap',
+  fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+  height: 1.0,
+);
+const TextStyle filterDropDownMediumTextStyle = TextStyle(
+  color: secondary,
+  letterSpacing: 0.5,
+  fontFamily: 'Trap',
+  fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+);
+const TextStyle bodyLargeBoldTextStyle = TextStyle(
+  color: secondary,
+  fontFamily: 'Trap',
+  fontSize: 14.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+  height: 1.20,
+);
+
 const TextStyle chatSubTitle = TextStyle(
   color: quikHyrBlue,
   fontFamily: 'Trap',
   fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w400,
+  height: 1.0,
+);
+
+const TextStyle notificationListTileTrailingTextStyle = TextStyle(
+  color: quikHyrBlue,
+  fontFamily: 'Trap',
+  fontSize: 10.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+  height: 1.0,
+);
+
+const TextStyle notificationListTileTitleTextStyle = TextStyle(
+  color: secondary,
+  fontFamily: 'Trap',
+  fontSize: 14.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+  height: 1.0,
+);
+
+const TextStyle notificationListTileSubtitleTextStyle = TextStyle(
+  color: quikHyrBlue,
+  fontFamily: 'Trap',
+  fontSize: 10.0,
   fontStyle: FontStyle.normal,
   fontWeight: FontWeight.w400,
   height: 1.0,

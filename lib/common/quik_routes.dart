@@ -12,11 +12,18 @@ class QuikRoutes {
   static const String welcomePath = '/welcome';
   static const String splashPath = '/splash';
   static const String homeName = 'Home';
-   static const notificationPath = '/notification';
+  static const String bookingDetailPath = 'bookingDetail';
+
+  static const String notificationPath = '/notification';
+  static const String notificationDetailPath = 'notificationDetail';
+  static const String mapPath = 'map';
+  static const bookingQrPath = 'bookingQr';
 
 
   static const String homeDetailsName = 'HomeDetail';
   static const String bookingName = 'Booking';
+  static const String bookingDetailName = 'bookingDetailName';
+
   static const String chatName = 'Chat';
   static const String chatConversationName = 'ChatConversation';
   static const String feedbackName = 'Feedback';
@@ -26,5 +33,8 @@ class QuikRoutes {
   static const String signUpName = 'SignUp';
   static const String welcomeName = 'Welcome';
   static const String splashName = 'Splash';
-   static const notificationName = 'notificationName';
+   static const String notificationName = 'notificationName';
+  static const String notificationDetailName = 'notificationDetailName';
+  static const String mapName = 'Map';
+  static const String bookingQrName = 'BookingQrName';
 }

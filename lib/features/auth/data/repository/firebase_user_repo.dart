@@ -3,6 +3,7 @@ import 'dart:developer';
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:quikhyr_worker/common/quik_secure_constants.dart';
 import 'package:quikhyr_worker/models/worker_model.dart';
 import 'package:http/http.dart' as http;
@@ -52,7 +53,7 @@ class FirebaseUserRepo {
 
       final result = await setUserData(newUser);
 
-      if (result is Left) {
+      if (result == false) {
         await userCredential.user!.delete();
         return false;
       }
@@ -66,6 +67,7 @@ class FirebaseUserRepo {
 
   Future<bool> setUserData(WorkerModel workerModel) async {
     try {
+      debugPrint(workerModel.toJson());
       final result = await createWorker(workerModel);
       return result.fold(
         (failure) {

@@ -51,4 +51,23 @@ class QuikAssetConstants {
   static const String notificationsSvg = 'assets/icons/notifications.svg';
   static const String privacySvg = 'assets/icons/privacy.svg';
   static const String termsAndConditionsSvg = 'assets/icons/terms_and_conditions.svg';
+    static const String backArrowSvg = 'assets/icons/back_arrow.svg';
+  static const String logoIconCircleTransparentPng =
+      'assets/icons/logo_icon_circle_transparent.png';
+  static const String cancelBookingSvg = 'assets/icons/cancel_booking.svg';
+  static const String downloadSvg = 'assets/icons/download.svg';
+  static const String dangerTriangleSvg = 'assets/icons/danger_triangle.svg';
+  static const String editSvg = 'assets/icons/edit.svg';
+  static const String currentLocationSvg =
+      'assets/icons/current_location.svg';
+  static const String photoCameraSvg = 'assets/icons/photo_camera.svg';
+  static const String gallerySvg = 'assets/icons/gallery.svg';
+  static const String serviceNotFoundImageSvg =
+      "https://firebasestorage.googleapis.com/v0/b/quikhyr-app.appspot.com/o/assets%2FNot_found.svg?alt=media&token=32c7b8a8-d4ca-4a6d-a6dd-0c8e7f3bd6f1";
+    static const String qrCodeSvg = 'assets/icons/qr_code.svg';
+  static const String qrCodeLargeSvg = 'assets/icons/qr_code_large.svg';
+  static const String arrowRightUpSvg = 'assets/icons/arrow_right_up.svg';
+  static const String ratingSvg = 'assets/icons/feedback_active.svg';
+
+
 }

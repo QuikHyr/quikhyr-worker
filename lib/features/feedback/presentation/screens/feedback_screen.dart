@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
@@ -49,7 +51,8 @@ class FeedbackScreen extends StatelessWidget {
                 ClickableSvgIcon(
                     svgAsset: QuikAssetConstants.filterSvg,
                     onTap: () {
-                      //HANDLE GO TO NOTIFICATIONS
+                      debugPrint(DateTime.now().toIso8601String());
+                      debugPrint(FirebaseAuth.instance.currentUser!.uid);
                     }),
                 QuikSpacing.hS24(),
               ],

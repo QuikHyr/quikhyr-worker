@@ -7,6 +7,7 @@ import 'package:quikhyr_worker/models/location_model.dart';
 
 class WorkerModel extends Equatable {
   final String id;
+  final String? summary;
   final String name;
   final String fcmToken;
   final bool isVerified;
@@ -25,6 +26,7 @@ class WorkerModel extends Equatable {
 
   const WorkerModel({
     this.locationName = "Initial Location",
+    this.summary,
     required this.fcmToken,
     required this.isVerified,
     required this.isActive,
@@ -43,6 +45,7 @@ class WorkerModel extends Equatable {
   });
 
   WorkerModel copyWith({
+    String? summary,
     String? locationName,
     String? fcmToken,
     bool? isVerified,
@@ -61,6 +64,7 @@ class WorkerModel extends Equatable {
     List<String>? serviceIds,
   }) {
     return WorkerModel(
+      summary: summary ?? this.summary,
       locationName: locationName ?? this.locationName,
       id: id ?? this.id,
       name: name ?? this.name,
@@ -82,6 +86,7 @@ class WorkerModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      // 'summary': summary,
       'id': id,
       'fcmToken': fcmToken,
       'isVerified': isVerified,
@@ -102,7 +107,10 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
-      locationName: map['locationName'] != null ? map['locationName'] as String : 'Location not found',
+      summary: map['summary'] != null ? map['summary'] as String : 'Summary not found',
+      locationName: map['locationName'] != null
+          ? map['locationName'] as String
+          : 'Location not found',
       fcmToken: map['fcmToken'] as String,
       isVerified: map['isVerified'] as bool,
       isActive: map['isActive'] as bool,
@@ -134,6 +142,7 @@ class WorkerModel extends Equatable {
   @override
   List<Object?> get props {
     return [
+      summary,
       locationName,
       id,
       name,

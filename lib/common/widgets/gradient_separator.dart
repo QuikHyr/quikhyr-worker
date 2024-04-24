@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
 class GradientSeparator extends StatelessWidget {
-  const GradientSeparator({Key? key}) : super(key: key);
+  final double? paddingTop;
+  final double? paddingBottom;
+  const GradientSeparator({Key? key, this.paddingTop, this.paddingBottom})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 22),
+      padding: EdgeInsets.fromLTRB(0, paddingTop ?? 22, 0, paddingBottom ?? 22),
       child: Container(
         height: 1,
         decoration: BoxDecoration(

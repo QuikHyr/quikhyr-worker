@@ -1,4 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class ChatMessageModel {
   final String? id;
   final bool? hasResponded;
@@ -48,7 +50,7 @@ class ChatMessageModel {
   Map<String, dynamic> toJson() => {
         'subserviceId': subserviceId,
         'hasResponded': hasResponded,
-        'timeslot': timeslot,
+        'timeslot': Timestamp.fromDate(timeslot!),
         'isAccepted': isAccepted,
         'unit': unit,
         'ratePerUnit': ratePerUnit,

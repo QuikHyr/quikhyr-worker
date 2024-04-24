@@ -10,17 +10,23 @@ import 'package:quikhyr_worker/features/auth/blocs/authentication_bloc/authentic
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_in_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/sign_up_screen.dart';
 import 'package:quikhyr_worker/features/auth/presentation/screens/welcome_screen.dart';
+import 'package:quikhyr_worker/features/booking/presentation/screens/booking_detail_screen.dart';
 import 'package:quikhyr_worker/features/booking/presentation/screens/booking_screen.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_conversation_screen.dart';
 import 'package:quikhyr_worker/features/chat/presentation/screens/chat_screen.dart';
 import 'package:quikhyr_worker/features/feedback/presentation/screens/feedback_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home/home_screen.dart';
 import 'package:quikhyr_worker/features/home/presentation/screens/home_detail/home_detail_screen.dart';
+import 'package:quikhyr_worker/features/home/presentation/screens/map_screen.dart';
 import 'package:quikhyr_worker/features/notification/presentation/notification_screen.dart';
 import 'package:quikhyr_worker/features/settings/presentation/screens/settings_screen.dart';
 import 'package:quikhyr_worker/main_wrapper.dart';
-import 'package:quikhyr_worker/models/chat_list_model.dart';
-import 'package:quikhyr_worker/models/client_model.dart';
+import 'package:quikhyr_worker/models/booking_model.dart';
+import 'package:quikhyr_worker/models/location_model.dart';
+import 'package:quikhyr_worker/models/notification_model.dart';
+
+import '../../features/notification/presentation/notification_detail_screen.dart';
+import '../screens/qr_screen.dart';
 
 abstract class AppRouter {
   final AuthenticationBloc authBloc;
@@ -173,6 +179,16 @@ abstract class AppRouter {
                               ));
                         },
                       ),
+                      GoRoute(
+                        path: QuikRoutes.mapPath,
+                        name: QuikRoutes.mapName,
+                        pageBuilder: (context, state) {
+                          return createCustomTransitionPage(MapScreen(
+                            locationModel: state.extra as LocationModel,
+                            key: state.pageKey,
+                          ));
+                        },
+                      )
                     ],
                   ),
                 ]),
@@ -216,12 +232,29 @@ abstract class AppRouter {
               navigatorKey: _shellNavigatorBookKey,
               routes: <RouteBase>[
                 GoRoute(
-                  path: QuikRoutes.bookingPath,
-                  name: QuikRoutes.bookingName,
-                  pageBuilder: (context, state) => NoTransitionPage(
-                    child: BookingScreen(key: state.pageKey),
-                  ),
-                ),
+                    path: QuikRoutes.bookingPath,
+                    name: QuikRoutes.bookingName,
+                    pageBuilder: (context, state) => NoTransitionPage(
+                          child: BookingScreen(key: state.pageKey),
+                        ),
+                    routes: [
+                      GoRoute(
+                          parentNavigatorKey: _shellNavigatorBookKey,
+                          path: "${QuikRoutes.bookingQrPath}/:qrData",
+                          name: QuikRoutes.bookingQrName,
+                          pageBuilder: (context, state) {
+                            return createCustomTransitionPage(QrScreen(
+                                qrData: state.pathParameters['qrData'] ??
+                                    'Data Fetching Error'));
+                          }),
+                          GoRoute(
+                          parentNavigatorKey: _shellNavigatorBookKey,
+                          path: QuikRoutes.bookingDetailPath,
+                          name: QuikRoutes.bookingDetailName,
+                          pageBuilder: (context, state) {
+                            return createCustomTransitionPage(BookingDetailScreen(booking: state.extra as Booking,));
+                          }),
+                    ]),
               ],
             ),
             StatefulShellBranch(
@@ -257,7 +290,17 @@ abstract class AppRouter {
           name: QuikRoutes.notificationName,
           pageBuilder: (context, state) => const NoTransitionPage(
                 child: NotificationScreen(),
-              )),
+              ),
+              routes: [
+ GoRoute(
+          path: QuikRoutes.notificationDetailPath,
+          name: QuikRoutes.notificationDetailName,
+          pageBuilder: (context, state) => NoTransitionPage(
+                child: NotificationDetailScreen(notification: state.extra as NotificationModel,),
+              ),
+              ),
+              ]
+              ),
 
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -288,6 +331,7 @@ abstract class AppRouter {
           path: QuikRoutes.splashPath,
           name: QuikRoutes.splashName,
           builder: (context, state) => const SplashScreen()),
+
       //It is not necessary to provide a navigatorKey if it isn't also
       //needed elsewhere. If not provided, a default key will be used.
     ],
@@ -297,6 +341,19 @@ abstract class AppRouter {
   static GoRouter get router => _router;
 }
 
+CustomTransitionPage<void> createCustomTransitionPage(Widget child) {
+  return CustomTransitionPage<void>(
+    child: child,
+    transitionsBuilder: (context, animation, secondaryAnimation, child) =>
+        SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(-1, 0), // Start from left (-1, 0)
+        end: Offset.zero,
+      ).animate(animation),
+      child: child,
+    ),
+  );
+}
 
 // import 'package:flutter/material.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';

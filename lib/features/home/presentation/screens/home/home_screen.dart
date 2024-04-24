@@ -12,6 +12,8 @@ import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';
 import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 
+import '../../../../notification/cubit/notification_cubit.dart';
+
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
@@ -58,6 +60,7 @@ class HomeScreen extends StatelessWidget {
               ClickableSvgIcon(
                   svgAsset: QuikAssetConstants.bellNotificationActiveSvg,
                   onTap: () {
+                    context.read<NotificationCubit>().getNotifications();
                     context.pushNamed(QuikRoutes.notificationName);
                   }),
               QuikSpacing.hS10(),
@@ -85,55 +88,60 @@ class HomeScreen extends StatelessWidget {
                       },
                       child: Column(
                         children: [
-                          InkWell(
-                            onTap: () async {
-                              context.read<WorkerBloc>().add(FetchInitiated());
+                          GestureDetector(
+                            onTap: () {
+                              context.pushNamed(QuikRoutes.mapName,
+                                  extra: state.worker.location);
+                            }
+                            // onTap: () async {
+                            //   context.read<WorkerBloc>().add(FetchInitiated());
 
-                              bool serviceEnabled;
-                              LocationPermission permissionGranted;
+                            //   bool serviceEnabled;
+                            //   LocationPermission permissionGranted;
 
-                              serviceEnabled =
-                                  await Geolocator.isLocationServiceEnabled();
-                              if (!serviceEnabled) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                        Text('Please enable location services'),
-                                  ),
-                                );
-                                return;
-                              }
+                            //   serviceEnabled =
+                            //       await Geolocator.isLocationServiceEnabled();
+                            //   if (!serviceEnabled) {
+                            //     ScaffoldMessenger.of(context).showSnackBar(
+                            //       const SnackBar(
+                            //         content:
+                            //             Text('Please enable location services'),
+                            //       ),
+                            //     );
+                            //     return;
+                            //   }
 
-                              permissionGranted =
-                                  await Geolocator.checkPermission();
-                              if (permissionGranted ==
-                                  LocationPermission.denied) {
-                                permissionGranted =
-                                    await Geolocator.requestPermission();
-                                if (permissionGranted !=
-                                        LocationPermission.always &&
-                                    permissionGranted !=
-                                        LocationPermission.whileInUse) {
-                                  if (context.mounted) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text(
-                                            'Location permission is denied'),
-                                      ),
-                                    );
-                                  }
-                                  return;
-                                }
-                              }
+                            //   permissionGranted =
+                            //       await Geolocator.checkPermission();
+                            //   if (permissionGranted ==
+                            //       LocationPermission.denied) {
+                            //     permissionGranted =
+                            //         await Geolocator.requestPermission();
+                            //     if (permissionGranted !=
+                            //             LocationPermission.always &&
+                            //         permissionGranted !=
+                            //             LocationPermission.whileInUse) {
+                            //       if (context.mounted) {
+                            //         ScaffoldMessenger.of(context).showSnackBar(
+                            //           const SnackBar(
+                            //             content: Text(
+                            //                 'Location permission is denied'),
+                            //           ),
+                            //         );
+                            //       }
+                            //       return;
+                            //     }
+                            //   }
 
-                              Position position =
-                                  await Geolocator.getCurrentPosition(
-                                      desiredAccuracy: LocationAccuracy.high);
-                              context.read<WorkerBloc>().add(UpdateLocation(
-                                  LocationModel(
-                                      latitude: position.latitude,
-                                      longitude: position.longitude)));
-                            },
+                            //   Position position =
+                            //       await Geolocator.getCurrentPosition(
+                            //           desiredAccuracy: LocationAccuracy.high);
+                            //   context.read<WorkerBloc>().add(UpdateLocation(
+                            //       LocationModel(
+                            //           latitude: position.latitude,
+                            //           longitude: position.longitude)));
+                            // },
+                            ,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
