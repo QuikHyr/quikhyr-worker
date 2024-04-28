@@ -26,6 +26,9 @@ const Color quikHyrNotificationGrey = Color(0xffc0c0c0);
 
 const Color quikHyrBlue = Color(0xff3399cc);
 const Color quikHyrGreen = Color(0xff6ec531);
+const Color quikHyrYellow = Color(0xffE4B61A);
+const Color quikHyrYellowBg = Color(0xff121109);
+const Color workerTextDark = Color(0xff070500);
 const Color quikHyrRed = Color(0xffFF002A);
 const Color placeHolderText = Color(0xffa0a4a6);
 const Color buttonDark = Color(0xff297aa3);

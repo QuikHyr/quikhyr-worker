@@ -7,10 +7,13 @@ import 'package:quikhyr_worker/models/booking_model.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 
 class NotificationModel extends Equatable {
+  final num? ratePerUnit;
+  final String? unit;
   final String? subserviceId;
   final List<String>? receiverIds;
   final LocationModel? location;
   final String? description;
+  final DateTime? dateTime;
   final List<String>? images;
   final String? senderId;
   final String? locationName;
@@ -18,6 +21,9 @@ class NotificationModel extends Equatable {
   final Timestamps? timestamps;
   final WorkAlertType? type;
   const NotificationModel({
+    this.ratePerUnit,
+    this.unit,
+    this.dateTime,
     this.receiverIds,
     this.timestamps,
     this.type,
@@ -43,6 +49,7 @@ class NotificationModel extends Equatable {
     String? senderId,
   }) {
     return NotificationModel(
+
       receiverIds: receiverIds ?? this.receiverIds,
       timestamps: timestamps ?? this.timestamps,
       type: type ?? this.type,
@@ -58,6 +65,9 @@ class NotificationModel extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'ratePerUnit': ratePerUnit,
+      'unit': unit,
+      'dateTime': dateTime?.toIso8601String(),
       'timestamps': timestamps?.toJson(),
       'locationName': locationName,
       'location': location?.toMap(),

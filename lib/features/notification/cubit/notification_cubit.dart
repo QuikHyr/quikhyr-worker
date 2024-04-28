@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:quikhyr_worker/features/notification/models/work_alert_rejection_back_to_client_model.dart';
+import 'package:quikhyr_worker/features/notification/models/work_approval_request_back_to_client_model.dart';
 import 'package:quikhyr_worker/features/notification/repository/notification_repo.dart';
 import 'package:quikhyr_worker/models/notification_model.dart';
 
@@ -24,9 +26,23 @@ class NotificationCubit extends Cubit<NotificationState> {
       (notifications) => emit(NotificationLoaded(notifications: notifications)),
     );
   }
-  void sendWorkAlertRejectionBackToClient(NotificationModel notification) async {
+
+  void sendWorkAlertRejectionBackToClient(
+      WorkAlertRejectionBackToClientModel notification) async {
     emit(const NotificationSentLoading());
-    final result = await _notificationRepo.createWorkAlertRejectionBackToClient(notification);
+    final result = await _notificationRepo
+        .createWorkAlertRejectionBackToClient(notification);
+    result.fold(
+      (error) => emit(NotificationSentError(error: error)),
+      (success) => emit(const NotificationSentSuccess()),
+    );
+  }
+
+  void sendWorkApprovalRequestBackToClient(
+      WorkApprovalRequestBackToClientModel notification) async {
+    emit(const NotificationSentLoading());
+    final result = await _notificationRepo
+        .createWorkApprovalRequestBackToClient(notification);
     result.fold(
       (error) => emit(NotificationSentError(error: error)),
       (success) => emit(const NotificationSentSuccess()),

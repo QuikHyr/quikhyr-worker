@@ -23,6 +23,11 @@ class AddWorker extends WorkerEvent {
   AddWorker(this.worker);
 }
 
+class UpdateAvailability extends WorkerEvent {
+  final bool newAvailability;
+  UpdateAvailability(this.newAvailability);
+}
+
 class FetchWorker extends WorkerEvent {}
 
 class FetchInitiated extends WorkerEvent {}

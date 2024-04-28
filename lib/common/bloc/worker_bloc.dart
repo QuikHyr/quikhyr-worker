@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quikhyr_worker/common/data/repositories/worker_repo.dart';
@@ -21,6 +23,7 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
     on<ResetWorker>(_onResetWorker);
     on<UpdateLocation>(_onUpdateLocation);
     on<FetchInitiated>(_onFetchInitiated);
+    on<UpdateAvailability>(_onUpdateAvailability);
 
     _userSubscription = firebaseUserRepo.user.listen((user) {
       if (user != null) {
@@ -76,5 +79,17 @@ class WorkerBloc extends Bloc<WorkerEvent, WorkerState> {
   FutureOr<void> _onFetchInitiated(
       FetchInitiated event, Emitter<WorkerState> emit) {
     emit(WorkerLoading());
+  }
+
+  FutureOr<void> _onUpdateAvailability(event, Emitter<WorkerState> emit) {
+    final String workerId = FirebaseAuth.instance.currentUser!.uid;
+    FirebaseFirestore.instance.collection('workers').doc(workerId).update({
+      'available': event.newAvailability,
+    }).then((value) {
+      add(FetchWorker());
+    }).catchError((error) {
+      emit(WorkerError(error: error.toString()));
+    });
+    
   }
 }

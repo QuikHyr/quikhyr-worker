@@ -35,10 +35,10 @@ class MyTextField extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _MyTextFieldState createState() => _MyTextFieldState();
+  MyTextFieldState createState() => MyTextFieldState();
 }
 
-class _MyTextFieldState extends State<MyTextField> {
+class MyTextFieldState extends State<MyTextField> {
   Color backgroundColor = textInputBackgroundColor;
 
   @override

@@ -50,7 +50,7 @@ class ChatMessageModel {
   Map<String, dynamic> toJson() => {
         'subserviceId': subserviceId,
         'hasResponded': hasResponded,
-        'timeslot': Timestamp.fromDate(timeslot!),
+        'timeslot': Timestamp.fromDate(timeslot ?? DateTime.now()),
         'isAccepted': isAccepted,
         'unit': unit,
         'ratePerUnit': ratePerUnit,

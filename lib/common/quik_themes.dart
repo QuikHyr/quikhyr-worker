@@ -146,7 +146,7 @@ const TextStyle bodyLargeBoldTextStyle = TextStyle(
 );
 
 const TextStyle chatSubTitle = TextStyle(
-  color: quikHyrBlue,
+  color: primary,
   fontFamily: 'Trap',
   fontSize: 12.0,
   fontStyle: FontStyle.normal,
@@ -155,7 +155,7 @@ const TextStyle chatSubTitle = TextStyle(
 );
 
 const TextStyle notificationListTileTrailingTextStyle = TextStyle(
-  color: quikHyrBlue,
+  color: primary,
   fontFamily: 'Trap',
   fontSize: 10.0,
   fontStyle: FontStyle.normal,
@@ -173,7 +173,7 @@ const TextStyle notificationListTileTitleTextStyle = TextStyle(
 );
 
 const TextStyle notificationListTileSubtitleTextStyle = TextStyle(
-  color: quikHyrBlue,
+  color: primary,
   fontFamily: 'Trap',
   fontSize: 10.0,
   fontStyle: FontStyle.normal,
@@ -200,7 +200,7 @@ const TextStyle chatSubTitleRead = TextStyle(
 );
 
 const TextStyle chatTrailingActive = TextStyle(
-  color: quikHyrBlue,
+  color: primary,
   fontFamily: 'Trap',
   fontSize: 12.0,
   fontStyle: FontStyle.normal,
@@ -218,7 +218,16 @@ const TextStyle chatTrailingInactive = TextStyle(
 );
 
 const TextStyle availabilityTextStyle = TextStyle(
-  color: quikHyrBlue,
+  color: primary,
+  fontFamily: 'Trap',
+  fontSize: 12.0,
+  fontStyle: FontStyle.normal,
+  fontWeight: FontWeight.w600,
+  height: 1.0,
+);
+
+const TextStyle availabilityTextStyle400 = TextStyle(
+  color: primary,
   fontFamily: 'Trap',
   fontSize: 12.0,
   fontStyle: FontStyle.normal,

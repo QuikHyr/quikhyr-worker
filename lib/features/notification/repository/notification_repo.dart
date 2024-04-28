@@ -6,6 +6,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:quikhyr_worker/common/quik_secure_constants.dart';
+import 'package:quikhyr_worker/features/notification/models/work_alert_rejection_back_to_client_model.dart';
+import 'package:quikhyr_worker/features/notification/models/work_approval_request_back_to_client_model.dart';
 import 'package:quikhyr_worker/models/notification_model.dart';
 
 class NotificationRepo {
@@ -31,7 +33,7 @@ class NotificationRepo {
   // }
 
   Future<Either<String, bool>> createWorkAlertRejectionBackToClient(
-      NotificationModel notification) async {
+      WorkAlertRejectionBackToClientModel notification) async {
     try {
       debugPrint(notification.toJson());
       final url = Uri.parse('$baseUrl/notifications/work-alert-rejection');
@@ -49,6 +51,28 @@ class NotificationRepo {
       }
     } catch (e) {
       return Left('Failed to create createWorkAlertRejectionBackToClient $e');
+    }
+  }
+
+    Future<Either<String, bool>> createWorkApprovalRequestBackToClient(
+      WorkApprovalRequestBackToClientModel notification) async {
+    try {
+      debugPrint(notification.toJson());
+      final url = Uri.parse('$baseUrl/notifications/work-approval-request');
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: notification.toJson(),
+      );
+      if (response.statusCode == 201) {
+        return const Right(true);
+      } else {
+        log(response.body);
+        return Left(
+            'Failed to create createWorkApprovalRequestBackToClient ${response.body}');
+      }
+    } catch (e) {
+      return Left('Failed to create createWorkApprovalRequestBackToClient $e');
     }
   }
 

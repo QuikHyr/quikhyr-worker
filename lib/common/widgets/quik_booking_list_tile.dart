@@ -23,7 +23,7 @@ class QuikBookingListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: gridItemBackgroundColor,
+        color: quikHyrYellowBg,
         borderRadius: BorderRadius.circular(16),
       ),
       child: ListTile(
@@ -35,7 +35,7 @@ class QuikBookingListTile extends StatelessWidget {
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: primary),
+            border: Border.all(color: quikHyrYellowBg),
           ),
           child: SvgPicture.network(
             booking.serviceAvatar,

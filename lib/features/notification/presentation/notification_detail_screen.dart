@@ -1,14 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:quikhyr_worker/common/enums/work_alert_type.dart';
 import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/gradient_separator.dart';
 import 'package:quikhyr_worker/common/widgets/quik_app_bar.dart';
 import 'package:quikhyr_worker/common/widgets/quik_short_button.dart';
+import 'package:quikhyr_worker/features/notification/models/work_alert_rejection_back_to_client_model.dart';
+import 'package:quikhyr_worker/features/notification/models/work_approval_request_back_to_client_model.dart';
 
+import '../../../models/location_model.dart';
 import '../../../models/notification_model.dart';
+import '../../auth/presentation/components/my_text_field.dart';
 import '../cubit/notification_cubit.dart';
 
 class NotificationDetailScreen extends StatelessWidget {
@@ -18,6 +24,9 @@ class NotificationDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final TextEditingController unitController = TextEditingController();
+    final TextEditingController pricePerUnitController =
+        TextEditingController();
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.background,
         appBar: QuikAppBar(
@@ -36,6 +45,7 @@ class NotificationDetailScreen extends StatelessWidget {
                 ),
               );
             }
+            // context.pop();
           },
           child: Padding(
             padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
@@ -81,12 +91,12 @@ class NotificationDetailScreen extends StatelessWidget {
                                       id !=
                                       FirebaseAuth.instance.currentUser!.uid)
                                   .toList();
-                          final NotificationModel rejectionNotification =
-                              NotificationModel(
+                          final WorkAlertRejectionBackToClientModel rejectionNotification =
+                              WorkAlertRejectionBackToClientModel(
                             senderId: FirebaseAuth.instance.currentUser!.uid,
-                            receiverIds: receiverIdsWithoutCurrentWorker,
-                            type: notification.type,
-                            workAlertId: notification.workAlertId,
+                            receiverIds: receiverIdsWithoutCurrentWorker ?? [],
+                            type: notification.type ?? WorkAlertType.general,
+                            workAlertId: notification.workAlertId ?? "WORK ALERT ID NOT FOUND",
                           );
                           context
                               .read<NotificationCubit>()
@@ -94,7 +104,7 @@ class NotificationDetailScreen extends StatelessWidget {
                                   rejectionNotification);
                           context.read<NotificationCubit>().getNotifications();
 
-                          Navigator.of(context).pop();
+                          // context.pop();
                         },
                       ),
                       QuikShortButton(
@@ -102,7 +112,118 @@ class NotificationDetailScreen extends StatelessWidget {
                         paddingVertical: 20,
                         text: "Accept",
                         onPressed: () {
-                          Navigator.of(context).pop();
+                          /*
+                          {"senderId":"9q9aXOqDbcPFn2ufunUydOmIhMk2",
+                          "receiverIds":["oBZYUrXvfCgdTS1lm7vK4f7EXft2"],
+                          "workAlertId":"09SO5YNRPqMIWekfUE4Q",
+                          "description":"heater","location":{"latitude":0,"longitude":0}, 
+                          "locationName": "Location Not Found","subserviceId":"gKfDXlClIK00wVOJNdUB",
+                          "dateTime": "2024-04-24T21:20:34.068381",
+                          "ratePerUnit":100, "unit": "heater"}
+                           */
+
+                          /*MyTextField(
+                              // enabledBorderColor: textInputBackgroundColor,
+                              controller: unitController,
+                              hintText: 'Enter Unit',
+                              obscureText: false,
+                              keyboardType: TextInputType.text,
+                            ),
+                            const SizedBox(height: 16),
+                            MyTextField(
+                                // enabledBorderColor: textInputBackgroundColor,
+                                controller: pricePerUnitController,
+                                hintText: 'Enter Price Per Unit',
+                                obscureText: false,
+                                keyboardType:
+                                    const TextInputType.numberWithOptions()),*/
+                          showModalBottomSheet(
+                              context: context,
+                              builder: (context) {
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    color: primary,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      MyTextField(
+                                        // enabledBorderColor: textInputBackgroundColor,
+                                        controller: unitController,
+                                        hintText: 'Enter Unit',
+                                        obscureText: false,
+                                        keyboardType: TextInputType.text,
+                                      ),
+                                      const SizedBox(height: 16),
+                                      MyTextField(
+                                          // enabledBorderColor: textInputBackgroundColor,
+                                          controller: pricePerUnitController,
+                                          hintText: 'Enter Price Per Unit',
+                                          obscureText: false,
+                                          keyboardType: const TextInputType
+                                              .numberWithOptions()),
+                                      const SizedBox(height: 16),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          QuikShortButton(
+                                            foregroundColor: primary,
+                                            backgroundColor: secondary,
+                                            text: 'Submit',
+                                            onPressed: () {
+                                              final WorkApprovalRequestBackToClientModel
+                                                  requestNotification =
+                                                  WorkApprovalRequestBackToClientModel(
+                                                unit: unitController.text,
+                                                ratePerUnit: double.parse(
+                                                    pricePerUnitController
+                                                        .text),
+                                                senderId: FirebaseAuth
+                                                    .instance.currentUser!.uid,
+                                                receiverIds: [
+                                                  notification.senderId ??
+                                                      "SENDER ID NOT FOUND"
+                                                ],
+                                                description:
+                                                    notification.description ?? "DESCRIPTION NOT FOUND",
+                                                subserviceId:
+                                                    notification.subserviceId ?? "SUBSERVICE ID NOT FOUND",
+                                                dateTime: DateTime.now(),
+                                                location: notification.location ?? LocationModel(latitude: 50, longitude: 50),
+                                                locationName:
+                                                    notification.locationName ?? "LOCATION NAME NOT FOUND",
+                                                workAlertId:
+                                                    notification.workAlertId ?? "WORK ALERT ID NOT FOUND",
+                                              );
+                                              context
+                                                  .read<NotificationCubit>()
+                                                  .sendWorkApprovalRequestBackToClient(
+                                                      requestNotification);
+                                              context
+                                                  .read<NotificationCubit>()
+                                                  .getNotifications();
+                                            },
+                                          ),
+                                          QuikShortButton(
+                                            backgroundColor:
+                                                gridItemBackgroundColor,
+                                            text: "Cancel",
+                                            onPressed: () {
+                                              context.pop();
+                                            },
+                                          )
+                                        ],
+                                      )
+                                    ],
+                                  ),
+                                );
+                              });
+                          //Navigator.of(context).pop();
                         },
                       ),
                     ],

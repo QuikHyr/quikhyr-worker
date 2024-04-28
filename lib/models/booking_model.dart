@@ -80,13 +80,25 @@ class Booking {
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
-    if (json['dateTime'] is! Map) {
+    DateTime dateTime;
+    if (json['dateTime'] is String) {
+      var match = RegExp(r'Timestamp\(seconds=(\d+), nanoseconds=(\d+)\)')
+          .firstMatch(json['dateTime']);
+      if (match != null) {
+        var seconds = int.parse(match.group(1)!);
+        var nanoseconds = int.parse(match.group(2)!);
+        dateTime = DateTime.fromMillisecondsSinceEpoch(
+            seconds * 1000 + nanoseconds ~/ 1000000);
+      } else {
+        throw 'Invalid dateTime format';
+      }
+    } else if (json['dateTime'] is Map) {
+      dateTime = DateTime.fromMillisecondsSinceEpoch(
+          (json['dateTime']['_seconds'] as int) * 1000 +
+              (json['dateTime']['_nanoseconds'] as int) ~/ 1000000);
+    } else {
       throw 'Invalid dateTime format';
     }
-
-    var dateTime = DateTime.fromMillisecondsSinceEpoch(
-        (json['dateTime']['_seconds'] as int) * 1000 +
-            (json['dateTime']['_nanoseconds'] as int) ~/ 1000000);
 
     return Booking(
       id: json["id"] ?? '',
@@ -114,7 +126,7 @@ class Booking {
         "subserviceName": subserviceName,
         "workerName": workerName,
         "workerId": workerId ?? '-200',
-        "dateTime": Timestamp.fromDate(dateTime).toString(),
+        "dateTime": dateTime.toIso8601String(),
         "unit": unit,
         "locationName": locationName,
         "ratePerUnit": ratePerUnit,
@@ -141,7 +153,7 @@ class Timestamps {
         "updatedAt": updatedAt.toJson(),
       };
 
-        factory Timestamps.fromMap(Map<String, dynamic> map) {
+  factory Timestamps.fromMap(Map<String, dynamic> map) {
     return Timestamps(
       createdAt: CreatedAt.fromMap(map['createdAt']),
       updatedAt: CreatedAt.fromMap(map['updatedAt']),
@@ -174,7 +186,7 @@ class CreatedAt {
         "_seconds": seconds,
         "_nanoseconds": nanoseconds,
       };
-      factory CreatedAt.fromMap(Map<String, dynamic> map) {
+  factory CreatedAt.fromMap(Map<String, dynamic> map) {
     return CreatedAt(
       seconds: map['_seconds'],
       nanoseconds: map['_nanoseconds'],
@@ -188,8 +200,9 @@ class CreatedAt {
     };
   }
 
-    DateTime toDateTime() {
-    return DateTime.fromMillisecondsSinceEpoch(seconds * 1000 + nanoseconds ~/ 1000000);
+  DateTime toDateTime() {
+    return DateTime.fromMillisecondsSinceEpoch(
+        seconds * 1000 + nanoseconds ~/ 1000000);
   }
 
   static CreatedAt fromDateTime(DateTime dateTime) {
