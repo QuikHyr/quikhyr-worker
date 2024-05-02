@@ -139,7 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             gender: _genderController.text.trim(),
             avatar: _avatar,
             age: age,
-            available: false,
+            available: true,
             location: LocationModel(
               latitude: _position.latitude,
               longitude: _position.latitude,

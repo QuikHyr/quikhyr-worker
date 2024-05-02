@@ -36,34 +36,37 @@ class BookingScreen extends StatelessWidget {
                 QuikSpacing.vS36(),
                 const BookingHeader(),
                 QuikSpacing.vS16(),
-                BlocBuilder<BookingCubit, BookingState>(
-                  builder: (context, state) {
-                    if (state is BookingLoading) {
-                      return const CircularProgressIndicator();
-                    } else if (state is BookingLoaded &&
-                        state.booking.currentBookings.isNotEmpty) {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) =>
-                            QuikSpacing.vS16(),
-                        itemCount: state.booking.currentBookings.length,
-                        itemBuilder: (context, index) {
-                          final booking = state.booking.currentBookings[index];
-                          return QuikBookingListTile(booking: booking);
-                        },
-                      );
-                    } else if (state is BookingLoaded &&
-                        state.booking.currentBookings.isEmpty) {
-                      return const Center(
-                        child: Text(
-                          'No current bookings',
-                          style: bodyLargeBoldTextStyle,
-                        ),
-                      );
-                    } else {
-                      return const Text('Error loading bookings');
-                    }
-                  },
+                Expanded(
+                  child: BlocBuilder<BookingCubit, BookingState>(
+                    builder: (context, state) {
+                      if (state is BookingLoading) {
+                        return const CircularProgressIndicator();
+                      } else if (state is BookingLoaded &&
+                          state.booking.currentBookings.isNotEmpty) {
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) =>
+                              QuikSpacing.vS16(),
+                          itemCount: state.booking.currentBookings.length,
+                          itemBuilder: (context, index) {
+                            final booking =
+                                state.booking.currentBookings[index];
+                            return QuikBookingListTile(booking: booking);
+                          },
+                        );
+                      } else if (state is BookingLoaded &&
+                          state.booking.currentBookings.isEmpty) {
+                        return const Center(
+                          child: Text(
+                            'No current bookings',
+                            style: bodyLargeBoldTextStyle,
+                          ),
+                        );
+                      } else {
+                        return const Text('Error loading bookings');
+                      }
+                    },
+                  ),
                 ),
                 QuikSpacing.vS24(),
                 Row(
@@ -102,43 +105,45 @@ class BookingScreen extends StatelessWidget {
                   ],
                 ),
                 QuikSpacing.vS16(),
-                BlocBuilder<BookingCubit, BookingState>(
-                  builder: (context, state) {
-                    if (state is BookingLoading) {
-                      return const CircularProgressIndicator();
-                    } else if (state is BookingLoaded &&
-                        state.booking.pastBookings.isNotEmpty) {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        separatorBuilder: (context, index) =>
-                            QuikSpacing.vS16(),
-                        itemCount: state.booking.pastBookings.length,
-                        itemBuilder: (context, index) {
-                          final booking = state.booking.pastBookings[index];
-                          return QuikBookingListTile(booking: booking);
-                        },
-                      );
-                    } else if (state is BookingLoaded &&
-                        state.booking.pastBookings.isEmpty) {
-                      return const Expanded(
-                        child: Center(
-                          child: Text(
-                            'No past bookings',
-                            style: bodyLargeBoldTextStyle,
+                Expanded(
+                  child: BlocBuilder<BookingCubit, BookingState>(
+                    builder: (context, state) {
+                      if (state is BookingLoading) {
+                        return const CircularProgressIndicator();
+                      } else if (state is BookingLoaded &&
+                          state.booking.pastBookings.isNotEmpty) {
+                        return ListView.separated(
+                          shrinkWrap: true,
+                          separatorBuilder: (context, index) =>
+                              QuikSpacing.vS16(),
+                          itemCount: state.booking.pastBookings.length,
+                          itemBuilder: (context, index) {
+                            final booking = state.booking.pastBookings[index];
+                            return QuikBookingListTile(booking: booking);
+                          },
+                        );
+                      } else if (state is BookingLoaded &&
+                          state.booking.pastBookings.isEmpty) {
+                        return const Expanded(
+                          child: Center(
+                            child: Text(
+                              'No past bookings',
+                              style: bodyLargeBoldTextStyle,
+                            ),
                           ),
-                        ),
-                      );
-                    } else {
-                      return const Expanded(
-                        child: Center(
-                          child: Text(
-                            'Error loading bookings',
-                            style: bodyLargeBoldTextStyle,
+                        );
+                      } else {
+                        return const Expanded(
+                          child: Center(
+                            child: Text(
+                              'Error loading bookings',
+                              style: bodyLargeBoldTextStyle,
+                            ),
                           ),
-                        ),
-                      );
-                    }
-                  },
+                        );
+                      }
+                    },
+                  ),
                 ),
               ],
             )));

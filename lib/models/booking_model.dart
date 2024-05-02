@@ -50,6 +50,7 @@ class Booking {
   String? id;
   String serviceName;
   String? clientId;
+  bool? hasRated;
   LocationModel? location;
   String serviceAvatar;
   String? subserviceId;
@@ -63,6 +64,7 @@ class Booking {
   Status status;
 
   Booking({
+    this.hasRated,
     this.id,
     required this.serviceName,
     this.clientId,
@@ -80,27 +82,28 @@ class Booking {
   });
 
   factory Booking.fromJson(Map<String, dynamic> json) {
-    DateTime dateTime;
-    if (json['dateTime'] is String) {
-      var match = RegExp(r'Timestamp\(seconds=(\d+), nanoseconds=(\d+)\)')
-          .firstMatch(json['dateTime']);
-      if (match != null) {
-        var seconds = int.parse(match.group(1)!);
-        var nanoseconds = int.parse(match.group(2)!);
-        dateTime = DateTime.fromMillisecondsSinceEpoch(
-            seconds * 1000 + nanoseconds ~/ 1000000);
-      } else {
-        throw 'Invalid dateTime format';
-      }
-    } else if (json['dateTime'] is Map) {
-      dateTime = DateTime.fromMillisecondsSinceEpoch(
-          (json['dateTime']['_seconds'] as int) * 1000 +
-              (json['dateTime']['_nanoseconds'] as int) ~/ 1000000);
-    } else {
-      throw 'Invalid dateTime format';
-    }
+    // DateTime dateTime;
+    // if (json['dateTime'] is String) {
+    //   var match = RegExp(r'Timestamp\(seconds=(\d+), nanoseconds=(\d+)\)')
+    //       .firstMatch(json['dateTime']);
+    //   if (match != null) {
+    //     var seconds = int.parse(match.group(1)!);
+    //     var nanoseconds = int.parse(match.group(2)!);
+    //     dateTime = DateTime.fromMillisecondsSinceEpoch(
+    //         seconds * 1000 + nanoseconds ~/ 1000000);
+    //   } else {
+    //     throw 'Invalid dateTime format';
+    //   }
+    // } else if (json['dateTime'] is Map) {
+    //   dateTime = DateTime.fromMillisecondsSinceEpoch(
+    //       (json['dateTime']['_seconds'] as int) * 1000 +
+    //           (json['dateTime']['_nanoseconds'] as int) ~/ 1000000);
+    // } else {
+    //   throw 'Invalid dateTime format';
+    // }
 
     return Booking(
+      hasRated: json["hasRated"] ?? false,
       id: json["id"] ?? '',
       serviceName: json["serviceName"] ?? '',
       clientId: json["clientId"] ?? '',
@@ -109,7 +112,7 @@ class Booking {
       serviceAvatar: json["serviceAvatar"] ?? '',
       subserviceName: json["subserviceName"] ?? '',
       workerName: json["workerName"] ?? '',
-      dateTime: dateTime,
+      dateTime: DateTime.parse(json["dateTime"]),
       unit: json["unit"] ?? '',
       locationName: json["locationName"] ?? '',
       ratePerUnit: json["ratePerUnit"] ?? 0,
@@ -118,6 +121,7 @@ class Booking {
   }
 
   Map<String, dynamic> toJson() => {
+        "hasRated": hasRated,
         "serviceName": serviceName,
         "clientId": clientId ?? '-99',
         "location": location?.toJson(),

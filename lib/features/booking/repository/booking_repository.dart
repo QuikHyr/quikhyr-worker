@@ -7,27 +7,27 @@ import 'package:quikhyr_worker/models/booking_model.dart';
 import 'package:quikhyr_worker/models/simple_booking_model.dart';
 
 class BookingRepository {
-  Future<Either<String, bool>> createBooking(SimpleBookingModel booking) async {
-    final url = Uri.parse('$baseUrl/bookings');
+  // Future<Either<String, bool>> createBooking(SimpleBookingModel booking) async {
+  //   final url = Uri.parse('$baseUrl/bookings');
 
-    try {
-      debugPrint(booking.toJson());
-      final response = await http.post(
-        url,
-        body: jsonEncode(booking.toJson()),
-        headers: {'Content-Type': 'application/json'},
-      );
+  //   try {
+  //     debugPrint(booking.toJson());
+  //     final response = await http.post(
+  //       url,
+  //       body: jsonEncode(booking.toJson()),
+  //       headers: {'Content-Type': 'application/json'},
+  //     );
 
-      if (response.statusCode == 201) {
-        // final responseData = jsonDecode(response.body);
-        return right(true);
-      } else {
-        return Left('Failed to create notification ${response.body}');
-      }
-    } catch (e) {
-      return Left('Failed to create notification $e');
-    }
-  }
+  //     if (response.statusCode == 201) {
+  //       // final responseData = jsonDecode(response.body);
+  //       return right(true);
+  //     } else {
+  //       return Left('Failed to create notification ${response.body}');
+  //     }
+  //   } catch (e) {
+  //     return Left('Failed to create notification $e');
+  //   }
+  // }
 
   Future<Either<String, BookingData>> getBookingsById(String workerId) async {
     final url = Uri.parse('$baseUrl/bookings/?workerId=$workerId');
