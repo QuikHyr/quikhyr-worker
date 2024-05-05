@@ -40,7 +40,7 @@ class BookingScreen extends StatelessWidget {
                   child: BlocBuilder<BookingCubit, BookingState>(
                     builder: (context, state) {
                       if (state is BookingLoading) {
-                        return const CircularProgressIndicator();
+                        return const Center(child: CircularProgressIndicator());
                       } else if (state is BookingLoaded &&
                           state.booking.currentBookings.isNotEmpty) {
                         return ListView.separated(
@@ -109,7 +109,7 @@ class BookingScreen extends StatelessWidget {
                   child: BlocBuilder<BookingCubit, BookingState>(
                     builder: (context, state) {
                       if (state is BookingLoading) {
-                        return const CircularProgressIndicator();
+                        return const Center(child: CircularProgressIndicator());
                       } else if (state is BookingLoaded &&
                           state.booking.pastBookings.isNotEmpty) {
                         return ListView.separated(

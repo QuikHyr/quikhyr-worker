@@ -4,7 +4,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_routes.dart';
-import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/utils/format_date.dart';
 import 'package:quikhyr_worker/common/widgets/quik_app_bar.dart';
@@ -12,8 +11,19 @@ import 'package:quikhyr_worker/features/notification/cubit/notification_cubit.da
 
 import '../../../common/quik_colors.dart';
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
+  @override
+  void initState() {
+    context.read<NotificationCubit>().getNotifications();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

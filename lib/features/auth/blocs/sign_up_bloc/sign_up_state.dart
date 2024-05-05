@@ -9,6 +9,7 @@ sealed class SignUpState extends Equatable {
 
 final class SignUpInitial extends SignUpState {}
 
+
 final class SignUpSuccess extends SignUpState {
   const SignUpSuccess();
   

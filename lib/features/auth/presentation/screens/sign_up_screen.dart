@@ -37,6 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final PageController pageController = PageController();
   // int _curr = 0;
   final TextEditingController _passwordController = TextEditingController();
+  bool isLoading = false;
   static final notifications = NotificationsService();
 
   @override
@@ -80,20 +81,44 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
       },
       child: Scaffold(
-        body: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: pageController,
-          children: [
-            buildAddDetails(),
-            buildSignUp(),
-            buildSetPassword(),
-            buildProfileInfo(),
-          ],
-          // onPageChanged: (num) {
-          //   setState(() {
-          //     _curr = num;
-          //   });
-          // },
+        body: BlocListener<SignUpBloc, SignUpState>(
+          listener: (context, state) {
+            if (state is SignUpProcess) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Signing up...')),
+                );
+            } else if (state is SignUpFailure) {
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  SnackBar(content: Text('Sign up failed: ${state.message}')),
+                );
+            } else if (state is SignUpSuccess) {
+              Navigator.of(context).pushReplacementNamed('/home');
+              ScaffoldMessenger.of(context)
+                ..hideCurrentSnackBar()
+                ..showSnackBar(
+                  const SnackBar(content: Text('Successfully signed up!')),
+                );
+            }
+          },
+          child: PageView(
+            physics: const NeverScrollableScrollPhysics(),
+            controller: pageController,
+            children: [
+              buildAddDetails(),
+              buildSignUp(),
+              buildSetPassword(),
+              buildProfileInfo(),
+            ],
+            // onPageChanged: (num) {
+            //   setState(() {
+            //     _curr = num;
+            //   });
+            // },
+          ),
         ),
       ),
     );
@@ -390,6 +415,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
         pageController: pageController,
         onButtonPressed: () async {
           if (_workerDetailsProfileFormKey.currentState!.validate()) {
+            setState(() {
+              isLoading = true;
+            });
             bool serviceEnabled;
             LocationPermission permissionGranted;
 
@@ -446,9 +474,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 duration: const Duration(milliseconds: 300),
                 curve: Curves.easeIn);
           }
+          setState(() {
+            isLoading = false;
+          });
         },
         color: Colors.teal,
-        buttonText: "Profile Info",
+        buttonText: isLoading ? "Loading" : "Profile Info",
         children: [
           QuikSpacing.vS24(),
           ClipOval(

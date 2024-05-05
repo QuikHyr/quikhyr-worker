@@ -34,8 +34,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     if (response.statusCode == 200) {
       return jsonDecode(response.body) as List;
     } else {
-      throw Exception('Failed to load data');
+      debugPrint("Failed to load data");
     }
+    return List<dynamic>.empty();
   }
 
   @override
@@ -91,6 +92,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           ),
         ),
         body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FutureBuilder<List<dynamic>>(
               future: fetchData(),
@@ -100,7 +102,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                   return const Center(child: CircularProgressIndicator());
                 } else if (snapshot.hasError) {
                   return Center(child: Text('Error: ${snapshot.error}'));
-                } else {
+                } else if (snapshot.connectionState == ConnectionState.active) {
                   return ListView.builder(
                     itemCount: snapshot.data?.length,
                     itemBuilder: (context, index) {
@@ -131,6 +133,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                         ],
                       );
                     },
+                  );
+                } else {
+                  return const Center(
+                    child: Text("Not Reviews Yet"),
                   );
                 }
               },

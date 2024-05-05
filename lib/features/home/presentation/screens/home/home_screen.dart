@@ -235,9 +235,9 @@ class HomeScreen extends StatelessWidget {
                               ),
                               const Spacer(),
                               CupertinoSwitch(
-                                  thumbColor: workerTextDark,
+                                  thumbColor: secondary,
                                   activeColor: quikHyrYellow,
-                                  trackColor: workerTextDark,
+                                  trackColor: quikHyrYellow.withOpacity(0.3),
                                   value: state.worker.available,
                                   onChanged: (onChanged) {
                                     context

@@ -66,19 +66,30 @@ class _ChatTextFieldState extends State<ChatTextField> {
       );
 
   Future<void> _sendText(BuildContext context) async {
-    if (controller.text.isNotEmpty) {
+    final String text = controller.text;
+    if (text.isNotEmpty) {
+      controller.clear();
       await FirebaseFirestoreService.addTextMessage(
         receiverId: widget.receiverId,
-        content: controller.text,
+        content: text,
+      ).catchError(
+        (error) {
+          debugPrint('Error sending message: $error');
+        },
       );
-      await notificationsService.sendNotification(
-        body: controller.text,
+
+      await notificationsService
+          .sendNotification(
+        body: text,
         senderId: FirebaseAuth.instance.currentUser!.uid,
-      );
-      controller.clear();
+      )
+          .catchError((error) {
+        debugPrint('Error sending notification: $error');
+      });
+    }
+    if (context.mounted) {
       FocusScope.of(context).unfocus();
     }
-    FocusScope.of(context).unfocus();
   }
 
   Future<void> _sendImage() async {

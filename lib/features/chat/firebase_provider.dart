@@ -17,75 +17,55 @@ class FirebaseProvider extends ChangeNotifier {
   List<ChatListModel> search = [];
 
   Stream<List<ChatListModel>> getAllClientsWithLastMessageStream() {
-    // Create a stream controller
-    StreamController<List<ChatListModel>> streamController = StreamController();
+    var streamController = StreamController<List<ChatListModel>>.broadcast();
 
-    FirebaseFirestore.instance.collection('clients').snapshots().listen(
-      (clientSnapshot) {
-        clientSnapshot.docs.forEach((doc) {
-          var clientData = doc.data() as Map<String, dynamic>?;
+    FirebaseFirestore.instance
+        .collection('clients')
+        .snapshots()
+        .listen((workerSnapshot) {
+      List<ChatListModel> initialUsers = [];
+      for (var doc in workerSnapshot.docs) {
+        var workerData = doc.data() as Map<String, dynamic>?;
+        if (workerData != null) {
+          // Fetch the last message for this worker
+          FirebaseFirestore.instance
+              .collection('workers')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .collection('chat')
+              .doc(doc.id)
+              .collection('messages')
+              .orderBy('sentTime', descending: true)
+              .limit(1)
+              .get()
+              .then((messageSnapshot) {
+            if (messageSnapshot.docs.isNotEmpty) {
+              var messageData =
+                  messageSnapshot.docs.first.data() as Map<String, dynamic>;
+              String lastMessage = messageData['content'] ?? '';
+              DateTime sentTime =
+                  (messageData['sentTime'] as Timestamp).toDate();
+              MessageType messageType =
+                  stringToMessageType(messageData['messageType']);
 
-          if (clientData != null) {
-            // Listen to the last message for this client in real-time
-            FirebaseFirestore.instance
-                .collection('workers')
-                .doc(FirebaseAuth.instance.currentUser!.uid)
-                .collection('chat')
-                .doc(doc.id)
-                .collection('messages')
-                .orderBy('sentTime', descending: true)
-                .limit(1)
-                .snapshots()
-                .listen(
-              (messageSnapshot) {
-                if (messageSnapshot.docs.isNotEmpty) {
-                  var messageData = messageSnapshot.docs.first.data();
+              ChatListModel workerWithLastMessage = ChatListModel(
+                name: workerData['name'],
+                id: doc.id,
+                isVerified: workerData['isVerified'] ?? false,
+                isActive: workerData['isActive'] ?? false,
+                avatar: workerData['avatar'] ?? '',
+                lastMessage: lastMessage,
+                sentTime: sentTime,
+                messageType: messageType,
+              );
 
-                  String lastMessage = messageData['content'] ?? '';
-                  DateTime sentTime =
-                      (messageData['sentTime'] as Timestamp).toDate();
-                  MessageType messageType =
-                      stringToMessageType(messageData['messageType']);
-
-                  // Construct the ChatListModel
-                  ChatListModel clientWithLastMessage = ChatListModel(
-                    name: clientData['name'],
-                    id: doc.id,
-                    isVerified: clientData['isVerified'] ?? false,
-                    isActive: clientData['isActive'] ?? false,
-                    avatar: clientData['avatar'] ?? '',
-                    lastMessage: lastMessage,
-                    sentTime: sentTime,
-                    messageType: messageType,
-                  );
-
-                  // Update the specific client with the new last message
-                  int index = users.indexWhere((user) => user.id == doc.id);
-                  if (index != -1) {
-                    users[index] = clientWithLastMessage;
-                  } else {
-                    users.add(clientWithLastMessage);
-                  }
-
-                  // Add the updated list of clients with the last message to the stream
-                  streamController.add(users);
-                }
-              },
-              // Handle errors in the inner stream
-              onError: (error) {
-                debugPrint('Error in inner stream: $error');
-                streamController.addError(error);
-              },
-            );
-          }
-        });
-      },
-      // Handle errors in the outer stream
-      onError: (error) {
-        debugPrint('Error in outer stream: $error');
-        streamController.addError(error);
-      },
-    );
+              initialUsers.add(workerWithLastMessage);
+            }
+            // Emit the initial list of users with the last message
+            streamController.add(initialUsers);
+          });
+        }
+      }
+    });
 
     return streamController.stream;
   }

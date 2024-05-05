@@ -9,12 +9,13 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:quikhyr_worker/common/quik_routes.dart';
 
+import '../../common/routes/router.dart';
+import '../notification/cubit/notification_cubit.dart';
+import 'presentation/screens/chat_conversation_screen.dart';
 
 const channel = AndroidNotificationChannel(
-    'high_importance_channel',
-    'Hign Importance Notifications',
-    description:
-        'This channel is used for important notifications.',
+    'high_importance_channel', 'Hign Importance Notifications',
+    description: 'This channel is used for important notifications.',
     importance: Importance.high,
     playSound: true);
 
@@ -22,12 +23,11 @@ class NotificationsService {
   static const key =
       'AAAAkTLRTRc:APA91bFxWxSHRNz727vGSWXat7DKWqoDHE8e7ph9yh0E2HFnLKGNcSZ5zJjsCZB_HbiPG2U2ZEYGnpj0-Ue0AvRygt-SZ4ncmcCNe1LlsfmduDUQYc51m-P7Ro_FLG8iKmW4Rw9uLEMT';
 
-  final flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   void _initLocalNotification() {
-    const androidSettings = AndroidInitializationSettings(
-        '@mipmap/ic_launcher');
+    const androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -36,19 +36,17 @@ class NotificationsService {
       requestSoundPermission: true,
     );
 
-    const initializationSettings = InitializationSettings(
-        android: androidSettings, iOS: iosSettings);
-    flutterLocalNotificationsPlugin
-        .initialize(initializationSettings,
-            onDidReceiveNotificationResponse: (response) {
+    const initializationSettings =
+        InitializationSettings(android: androidSettings, iOS: iosSettings);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings,
+        onDidReceiveNotificationResponse: (response) {
       debugPrint(response.payload.toString());
     });
   }
 
-  Future<void> _showLocalNotification(
-      RemoteMessage message) async {
+  Future<void> _showLocalNotification(RemoteMessage message) async {
     final styleInformation = BigTextStyleInformation(
-      message.notification!.body.toString(),
+      message.notification?.body.toString() ?? "No Message Body",
       htmlFormatBigText: true,
       contentTitle: message.notification!.title,
       htmlFormatTitle: true,
@@ -69,11 +67,8 @@ class NotificationsService {
       android: androidDetails,
       iOS: iosDetails,
     );
-    await flutterLocalNotificationsPlugin.show(
-        0,
-        message.notification!.title,
-        message.notification!.body,
-        notificationDetails,
+    await flutterLocalNotificationsPlugin.show(0, message.notification!.title,
+        message.notification!.body, notificationDetails,
         payload: message.data['body']);
   }
 
@@ -90,21 +85,18 @@ class NotificationsService {
       sound: true,
     );
 
-    if (settings.authorizationStatus ==
-        AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       debugPrint('User granted permission');
     } else if (settings.authorizationStatus ==
         AuthorizationStatus.provisional) {
       debugPrint('User granted provisional permission');
     } else {
-      debugPrint(
-          'User declined or has not accepted permission');
+      debugPrint('User declined or has not accepted permission');
     }
   }
 
   Future<void> getToken() async {
-    final token =
-        await FirebaseMessaging.instance.getToken();
+    final token = await FirebaseMessaging.instance.getToken();
     _saveToken(token!);
   }
 
@@ -125,29 +117,36 @@ class NotificationsService {
     receiverToken = await getToken.data()!['fcmToken'];
   }
 
-  void firebaseNotification(context) async{
+  void firebaseNotification(context) async {
     _initLocalNotification();
 
-    FirebaseMessaging.onMessageOpenedApp
-        .listen((RemoteMessage message) async{
-      // await Navigator.of(context).push(
-      //   MaterialPageRoute(
-      //     builder: (_) =>
-      //         ChatConversationScreen(clientId: message.data['senderId']),
-      //   ),
-      // );
-      GoRouter.of(context).goNamed(QuikRoutes.chatConversationName, pathParameters: {'clientId': message.data['senderId']});
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      if (message.data.containsKey("workAlert") ||
+          message.data.containsKey("workApprovalRequest")) {
+        AppRouter.router.pushNamed(QuikRoutes.notificationName);
+      }
+      //!!NEED TO UPDATE THE DATA TYPE WHEN SENDING CHAT MESSAGE NOTIFICATION
+      else {
+        AppRouter.router.pushNamed(QuikRoutes.chatConversationName,
+            pathParameters: {'clientId': message.data['senderId']});
+      }
     });
 
-    FirebaseMessaging.onMessage
-        .listen((RemoteMessage message) async {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       await _showLocalNotification(message);
+      //       if (message.data.containsKey("workAlert") || message.data.containsKey("workApprovalRequest")) {
+      //   AppRouter.router.pushNamed(QuikRoutes.notificationName);
+      // }
+      // //!!NEED TO UPDATE THE DATA TYPE WHEN SENDING CHAT MESSAGE NOTIFICATION
+      // else {
+      //   AppRouter.router.pushNamed(QuikRoutes.chatConversationName,
+      //       pathParameters: {'clientId': message.data['senderId']});
+      // }
     });
   }
 
   Future<void> sendNotification(
-      {required String body,
-      required String senderId}) async {
+      {required String body, required String senderId}) async {
     try {
       final response = await http.post(
         Uri.parse('https://fcm.googleapis.com/fcm/send'),
