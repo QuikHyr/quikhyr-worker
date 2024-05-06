@@ -63,7 +63,12 @@ class BookingScreen extends StatelessWidget {
                           ),
                         );
                       } else {
-                        return const Text('Error loading bookings');
+                        return const Center(
+                          child: Text(
+                            'No current bookings',
+                            style: bodyLargeBoldTextStyle,
+                          ),
+                        );
                       }
                     },
                   ),
@@ -134,13 +139,12 @@ class BookingScreen extends StatelessWidget {
                         );
                       } else {
                         return const Expanded(
-                          child: Center(
-                            child: Text(
-                              'Error loading bookings',
-                              style: bodyLargeBoldTextStyle,
-                            ),
+                            child: Center(
+                          child: Text(
+                            'No current bookings',
+                            style: bodyLargeBoldTextStyle,
                           ),
-                        );
+                        ));
                       }
                     },
                   ),

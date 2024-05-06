@@ -28,6 +28,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
   }
 
   Future<List<dynamic>> fetchData() async {
+    debugPrint(FirebaseAuth.instance.currentUser!.uid);
     final response = await http.get(Uri.parse(
         '$baseUrl/ratings?workerId=${FirebaseAuth.instance.currentUser!.uid}'));
 
@@ -95,52 +96,65 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FutureBuilder<List<dynamic>>(
-              future: fetchData(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<List<dynamic>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                } else if (snapshot.connectionState == ConnectionState.active) {
-                  return ListView.builder(
-                    itemCount: snapshot.data?.length,
-                    itemBuilder: (context, index) {
-                      var data = snapshot.data![index];
-                      return Column(
-                        children: [
-                          ListTile(
-                            title: Text(
-                              'Subservice Name: ${data['subserviceName']}',
-                              style: workerListNameTextStyle,
-                            ),
-                            subtitle: Text(
-                              'Feedback: ${data['overallRating']['feedback']}',
-                              style: workerListNameTextStyle,
-                            ),
-                          ),
-                          RatingBar.builder(
-                            ignoreGestures: true,
-                            tapOnlyMode: true,
-                            initialRating:
-                                data['overallRating']['rating'].toDouble(),
-                            minRating: 1,
-                            itemCount: 5,
-                            itemBuilder: (context, _) =>
-                                const Icon(Icons.star_rounded),
-                            onRatingUpdate: (rating) {},
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                } else {
-                  return const Center(
-                    child: Text("Not Reviews Yet"),
-                  );
-                }
-              },
-            ),
+  future: fetchData(),
+  builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(child: CircularProgressIndicator());
+    } else if (snapshot.hasError) {
+      return Center(child: Text('Error: ${snapshot.error}'));
+    } else if (snapshot.connectionState == ConnectionState.done) {
+      if (snapshot.data == null || snapshot.data!.isEmpty) {
+        return const Center(
+          child: Text("No Reviews Yet"),
+        );
+      } else {
+        // Sort the data based on the 'createdAt' timestamp
+        snapshot.data!.sort((a, b) {
+          var timeA = (a['timestamps']['createdAt']['_seconds'] as int);
+          var timeB = (b['timestamps']['createdAt']['_seconds'] as int);
+          return timeB.compareTo(timeA); // For descending order
+        });
+
+        return Flexible(
+          child: ListView.builder(
+            itemCount: snapshot.data?.length,
+            itemBuilder: (context, index) {
+              var data = snapshot.data![index];
+              return Column(
+                children: [
+                  ListTile(
+                    title: Text(
+                      'Subservice Name: ${data['subserviceName']}',
+                      style: workerListNameTextStyle,
+                    ),
+                    subtitle: Text(
+                      'Feedback: ${data['overallRating']['feedback']}',
+                      style: workerListNameTextStyle,
+                    ),
+                  ),
+                  RatingBar.builder(
+                    ignoreGestures: true,
+                    tapOnlyMode: true,
+                    initialRating:
+                        data['overallRating']['rating'].toDouble(),
+                    minRating: 1,
+                    itemCount: 5,
+                    itemBuilder: (context, _) =>
+                        const Icon(Icons.star_rounded),
+                    onRatingUpdate: (rating) {},
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      }
+    } else {
+      return const Center(child: CircularProgressIndicator());
+    }
+  },
+),
+
           ],
         ));
   }

@@ -43,7 +43,7 @@ class BookingDetailScreen extends StatelessWidget {
                   onTap: () {
                     context.pushNamed(QuikRoutes.bookingQrName,
                         pathParameters: {
-                          "qrData": booking.id.hashCode.toString()
+                          "qrData": booking.id.hashCode.toString(), "bookingId": booking.id ?? "-00"
                         });
                   })
           ],

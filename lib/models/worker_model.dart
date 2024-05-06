@@ -13,6 +13,7 @@ class WorkerModel extends Equatable {
   final bool isVerified;
   final bool isActive;
   final num? age;
+  final num? rating;
   final bool available;
   final String avatar;
   final String email;
@@ -27,6 +28,7 @@ class WorkerModel extends Equatable {
   const WorkerModel({
     this.locationName = "Initial Location",
     this.summary,
+    this.rating,
     required this.fcmToken,
     required this.isVerified,
     required this.isActive,
@@ -52,6 +54,7 @@ class WorkerModel extends Equatable {
     bool? isActive,
     String? id,
     String? name,
+    num? rating,
     num? age,
     bool? available,
     String? avatar,
@@ -64,6 +67,7 @@ class WorkerModel extends Equatable {
     List<String>? serviceIds,
   }) {
     return WorkerModel(
+      rating: rating ?? this.rating,
       summary: summary ?? this.summary,
       locationName: locationName ?? this.locationName,
       id: id ?? this.id,
@@ -107,7 +111,10 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
-      summary: map['summary'] != null ? map['summary'] as String : 'Summary not found',
+      rating: map['rating'] != null ? map['rating'] as num : 0.0,
+      summary: map['summary'] != null
+          ? map['summary'] as String
+          : 'Summary not found',
       locationName: map['locationName'] != null
           ? map['locationName'] as String
           : 'Location not found',
@@ -145,6 +152,7 @@ class WorkerModel extends Equatable {
       summary,
       locationName,
       id,
+      
       name,
       age,
       available,

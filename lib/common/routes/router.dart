@@ -240,10 +240,11 @@ abstract class AppRouter {
                     routes: [
                       GoRoute(
                           parentNavigatorKey: _shellNavigatorBookKey,
-                          path: "${QuikRoutes.bookingQrPath}/:qrData",
+                          path: "${QuikRoutes.bookingQrPath}/:qrData/:bookingId",
                           name: QuikRoutes.bookingQrName,
                           pageBuilder: (context, state) {
                             return createCustomTransitionPage(QrScreen(
+                              bookingId: state.pathParameters['bookingId'] ?? '-99',
                                 qrData: state.pathParameters['qrData'] ??
                                     'Data Fetching Error'));
                           }),

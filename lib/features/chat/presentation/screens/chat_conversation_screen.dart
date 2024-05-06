@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:http/http.dart' as http;
 import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
 import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +28,8 @@ import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/service_model.dart';
 import 'package:quikhyr_worker/models/subservices_model.dart';
 
+import '../../../../common/quik_secure_constants.dart';
+
 class ChatConversationScreen extends StatefulWidget {
   final String clientId;
   const ChatConversationScreen({super.key, required this.clientId});
@@ -35,37 +41,12 @@ class ChatConversationScreen extends StatefulWidget {
 class _ChatConversationScreenState extends State<ChatConversationScreen> {
   final unitController = TextEditingController();
   final pricePerUnitController = TextEditingController();
+  String? _selectedService;
+  SubserviceModel? _selectedSubService;
+  Map<String, List<SubserviceModel>> _serviceSubserviceMap = {};
   String subserviceId = '00';
   final NotificationsService notificationsService = NotificationsService();
   DateTime selectedDateTime = DateTime.now();
-
-  List<ServiceModel> _selectedServicesList = [];
-  List<SubserviceModel> _selectedSubServicesList = [];
-  List<ServiceModel> _allServicesList = [];
-  List<SubserviceModel> _allSubservicesList = [];
-
-  ServiceModel? _selectedService;
-  SubserviceModel? _selectedSubService;
-
-  // ...
-
-  void _onServiceSelected(ServiceModel service) {
-    setState(() {
-      _selectedService = service;
-      _selectedSubServicesList = _allSubservicesList
-          .where((subservice) => subservice.serviceId == service.id)
-          .toList();
-      if (_selectedSubServicesList.isNotEmpty) {
-        _selectedSubService = _selectedSubServicesList[0];
-      }
-    });
-  }
-
-  void _onSubServiceSelected(SubserviceModel subservice) {
-    setState(() {
-      _selectedSubService = subservice;
-    });
-  }
 
   @override
   void initState() {
@@ -73,7 +54,53 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
       ..getClientById(widget.clientId)
       ..getMessages(widget.clientId);
     notificationsService.getReceiverToken(widget.clientId);
+    _loadData();
     super.initState();
+  }
+
+  void _loadData() async {
+    List<SubserviceModel> subservices = await _fetchSubservices();
+    for (var subservice in subservices) {
+      if (!_serviceSubserviceMap.containsKey(subservice.serviceName)) {
+        _serviceSubserviceMap[subservice.serviceName] = [];
+      }
+      _serviceSubserviceMap[subservice.serviceName]!.add(subservice);
+    }
+
+    // Update the state to reflect the changes
+    setState(() {});
+  }
+
+  Future<List<SubserviceModel>> _fetchSubservices() async {
+    try {
+      final response =
+          await getSubservicesData(FirebaseAuth.instance.currentUser!.uid);
+      final jsonResponse = jsonDecode(response);
+      if (jsonResponse is! List<dynamic>) {
+        throw Exception('Unexpected response format');
+      }
+      final subserviceModelList = jsonResponse
+          .map((item) => SubserviceModel.fromJson(json.encode(item)))
+          .toList();
+      return subserviceModelList;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  Future<String> getSubservicesData(String workerId) async {
+    try {
+      final url = Uri.parse('$baseUrl/subservices?workerId=$workerId');
+      final response = await http.get(url);
+
+      if (response.statusCode == 200) {
+        return response.body;
+      } else {
+        return 'Failed to get subservices ${response.body}';
+      }
+    } catch (e) {
+      return 'Failed to get subservices: $e';
+    }
   }
 
   Future<void> _sendBooking(BuildContext context) async {
@@ -274,133 +301,37 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                               },
                             ),
                             const SizedBox(height: 16),
-                            StatefulBuilder(
-                                builder: (context, StateSetter newSetState) {
-                              return BlocConsumer<ServiceAndSubserviceListBloc,
-                                  ServiceAndSubserviceListState>(
-                                listener: (context, state) {
-                                  if (state is ServiceAndSubserviceListLoaded) {
-                                    _allServicesList = state.serviceModels;
-                                    _allSubservicesList = state
-                                        .subserviceModels; // assuming services is a list in ServiceModel
-                                  }
+                            DropdownButton<String>(
+                              value: _selectedService,
+                              items: _serviceSubserviceMap.keys.map((service) {
+                                return DropdownMenuItem<String>(
+                                  value: service,
+                                  child: Text(service),
+                                );
+                              }).toList(),
+                              onChanged: (value) {
+                                setState(() {
+                                  _selectedService = value;
+                                  _selectedSubService = null;
+                                });
+                              },
+                            ),
+                            if (_selectedService != null)
+                              DropdownButton<SubserviceModel>(
+                                value: _selectedSubService,
+                                items: _serviceSubserviceMap[_selectedService]!
+                                    .map((subService) {
+                                  return DropdownMenuItem<SubserviceModel>(
+                                    value: subService,
+                                    child: Text(subService.name),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    _selectedSubService = value;
+                                  });
                                 },
-                                builder: (context, state) {
-                                  if (state
-                                      is ServiceAndSubserviceListLoading) {
-                                    return const Center(
-                                        child: CircularProgressIndicator());
-                                  } else if (state
-                                      is ServiceAndSubserviceListLoaded) {
-                                    debugPrint(_allSubservicesList.toString());
-                                    debugPrint(_allServicesList.toString());
-
-                                    return Column(
-                                      children: [
-                                        QuikSpacing.vS32(),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            color: textInputBackgroundColor,
-                                          ),
-                                          child: DropdownButton<ServiceModel>(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 24),
-                                            value: _selectedService,
-                                            icon: const Icon(
-                                                Icons.arrow_downward),
-                                            iconSize: 24,
-                                            elevation: 16,
-                                            style: const TextStyle(
-                                                color: secondary),
-                                            underline: Container(),
-                                            onChanged:
-                                                (ServiceModel? newValue) {
-                                              newSetState(() {
-                                                _selectedService = newValue;
-                                                _onServiceSelected(newValue!);
-                                              });
-                                            },
-                                            items: _allServicesList.map<
-                                                    DropdownMenuItem<
-                                                        ServiceModel>>(
-                                                (ServiceModel value) {
-                                              return DropdownMenuItem<
-                                                  ServiceModel>(
-                                                value: value,
-                                                child: Text(
-                                                  value.name,
-                                                  style: const TextStyle(
-                                                      color: secondary),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                        QuikSpacing.vS8(),
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                            color: textInputBackgroundColor,
-                                          ),
-                                          child:
-                                              DropdownButton<SubserviceModel>(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 24),
-                                            value: _selectedSubService,
-                                            icon: const Icon(
-                                                Icons.arrow_downward),
-                                            iconSize: 24,
-                                            elevation: 16,
-                                            style: const TextStyle(
-                                                color: secondary),
-                                            underline: Container(),
-                                            onChanged:
-                                                (SubserviceModel? newValue) {
-                                              newSetState(() {
-                                                _selectedSubService = newValue;
-                                                _onSubServiceSelected(
-                                                    newValue!);
-                                              });
-                                            },
-                                            items: _selectedSubServicesList.map<
-                                                    DropdownMenuItem<
-                                                        SubserviceModel>>(
-                                                (SubserviceModel value) {
-                                              return DropdownMenuItem<
-                                                  SubserviceModel>(
-                                                value: value,
-                                                child: Text(value.name),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ),
-                                        QuikSpacing.vS20(),
-                                      ],
-                                    );
-                                  } else {
-                                    return const Center(
-                                        child: Text('Error loading services'));
-                                  }
-
-                                  // Add dropdown menus for service and subservice selection in the appropriate place
-                                  // return DropdownButtonFormField<String>(
-                                  //   items: _services.map((service) {
-                                  //     return DropdownMenuItem<String>(
-                                  //       value: service.id, // assuming id is a field in ServiceModel
-                                  //       child: Text(service.name), // assuming name is a field in ServiceModel
-                                  //     );
-                                  //   }).toList(),
-                                  //   onChanged: (serviceId) {
-                                  //     context.read<ServiceAndSubserviceListBloc>().add(GetSubserviceList(serviceId: serviceId!));
-                                  //   },
-                                  // );
-                                  // Similarly for subservices
-                                },
-                              );
-                            }),
+                              ),
                             const SizedBox(height: 16),
                             Text(
                               'Selected Date and Time: ${DateFormat('yyyy-MM-dd – kk:mm').format(selectedDateTime)}',

@@ -46,4 +46,5 @@ Future<Either<String, List<ServiceModel>>> getServicesData() async {
     return Left(e.toString());
   }
 }
+
 }

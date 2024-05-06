@@ -79,7 +79,7 @@ void showAccountCreationSuccessSnackBar(BuildContext context) {
 void showImmediateBookingCreationSuccessSnackBar(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(
     const SnackBar(
-      content: Text('Booking created successfully'),
+      content: Text('Booking request sent successfully'),
       backgroundColor: Colors.green,
     ),
   );

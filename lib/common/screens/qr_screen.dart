@@ -1,21 +1,61 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 import '../quik_asset_constants.dart';
 import '../quik_colors.dart';
+import '../quik_secure_constants.dart';
 import '../quik_spacings.dart';
 import '../quik_themes.dart';
 import '../widgets/gradient_separator.dart';
 import '../widgets/quik_app_bar.dart';
 import '../widgets/quik_search_bar.dart';
 
+import 'package:http/http.dart' as http;
 
-class QrScreen extends StatelessWidget {
+class QrScreen extends StatefulWidget {
   final String qrData;
-  const QrScreen({super.key, required this.qrData});
+  final String bookingId;
+  const QrScreen({super.key, required this.qrData, required this.bookingId});
+
+  @override
+  State<QrScreen> createState() => _QrScreenState();
+}
+
+class _QrScreenState extends State<QrScreen> with WidgetsBindingObserver {
+  Future<void> updateBookingStatus(String bookingId) async {
+  final url = '${baseUrl}/bookings/$bookingId';
+  final body = jsonEncode({'status': 'Completed'});  // Use jsonEncode
+
+  try {
+    final response = await http.put(Uri.parse(url),
+        body: body, headers: {'Content-Type': 'application/json'});
+    if (response.statusCode == 201) {
+      // Success
+      debugPrint('Booking status updated successfully ${response.body}');
+    } else {
+      // Error
+      debugPrint('Failed to update booking status ${response.body}');
+    }
+  } catch (e) {
+    // Exception
+    debugPrint('Exception occurred: $e');
+  }
+}
+
+  final MobileScannerController controller = MobileScannerController(
+    torchEnabled: true,
+    useNewCameraSelector: true,
+  );
+
+  String? scannedQr;
 
   @override
   Widget build(BuildContext context) {
+    debugPrint("widgetData: ${widget.qrData}");
     return Scaffold(
       appBar: const QuikAppBar(
         showBackButton: true,
@@ -23,51 +63,29 @@ class QrScreen extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            QuikSearchBar(
-              controller: TextEditingController(),
-              onMicPressed: () {},
-              onChanged: (p0) {},
-              hintText: 'Search for bookings..',
-              onSearch: (value) {
-                // context.read<SearchBloc>().add(SearchService(value));
-              },
-            ),
-            QuikSpacing.vS36(),
-            const GradientSeparator(),
-            QuikSpacing.vS24(),
-            Text(
-              "SCAN QR CODE",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            QuikSpacing.vS32(),
-            const Text(
-              "Show this QR Code to the worker, after the work has been completed.",
-              style: chatSubTitleRead,
-            ),
-            QuikSpacing.vS32(),
-            Container(
-              decoration: BoxDecoration(
-                color: secondary,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding: const EdgeInsets.all(12),
-              child: PrettyQrView(
-                decoration: const PrettyQrDecoration(
-                    image: PrettyQrDecorationImage(
-                        scale: 0.3,
-                        image: AssetImage(
-                            QuikAssetConstants.logoIconCircleTransparentPng)),
-                    background: secondary,
-                    shape: PrettyQrSmoothSymbol(roundFactor: 0.7)),
-                qrImage: QrImage(QrCode.fromData(
-                    data: qrData, errorCorrectLevel: QrErrorCorrectLevel.H)),
-              ),
-            ),
-          ],
-        ),
+        child: MobileScanner(
+            controller: MobileScannerController(
+                detectionSpeed: DetectionSpeed.noDuplicates),
+            onDetect: (capture) {
+              final List<Barcode> barcodes = capture.barcodes;
+              for (final barcode in barcodes) {
+                debugPrint('Barcode Found! ${barcode.rawValue}');
+                if (barcode.rawValue == widget.qrData) {
+                  MobileScannerController().stop();
+                  updateBookingStatus(widget.bookingId);
+                  context.pop();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text(
+                        'QR Code Scanned Successfully, Work Completed',
+                        style: TextStyle(color: secondary),
+                      ),
+                      backgroundColor: quikHyrGreen,
+                    ),
+                  );
+                }
+              }
+            }),
       ),
     );
   }

@@ -80,7 +80,8 @@ class QuikBookingListTile extends StatelessWidget {
                       QuikRoutes.bookingQrName,
                       pathParameters: {
                         "qrData":
-                            booking.id.hashCode.toString()
+                            booking.id.hashCode.toString(),
+                            "bookingId": booking.id ?? "-00"
                       });
                 }),
             QuikSpacing.hS12(),

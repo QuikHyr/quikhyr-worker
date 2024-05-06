@@ -12,8 +12,9 @@ part 'service_and_subservice_list_state.dart';
 
 class ServiceAndSubserviceListBloc
     extends Bloc<ServiceAndSubserviceListEvent, ServiceAndSubserviceListState> {
-      final ServiceAndSubserviceRepo dataProvider;
-  ServiceAndSubserviceListBloc(this.dataProvider) : super(ServiceAndSubserviceListInitial()) {
+  final ServiceAndSubserviceRepo dataProvider;
+  ServiceAndSubserviceListBloc(this.dataProvider)
+      : super(ServiceAndSubserviceListInitial()) {
     // on<GetServiceList>(_getServiceList);
     on<GetServicesAndSubservices>(_getServicesAndSubservices);
   }
@@ -36,18 +37,19 @@ class ServiceAndSubserviceListBloc
   //   );
   // }
 
-
-
-  FutureOr<void> _getServicesAndSubservices(GetServicesAndSubservices event, Emitter<ServiceAndSubserviceListState> emit) async{
+  FutureOr<void> _getServicesAndSubservices(GetServicesAndSubservices event,
+      Emitter<ServiceAndSubserviceListState> emit) async {
     emit(ServiceAndSubserviceListLoading());
     final response = await dataProvider.getServicesAndSubservicesData();
 
     response.fold(
       (l) => emit(ServiceAndSubserviceListError(error: l)),
       (r) {
-      emit(ServiceAndSubserviceListLoaded(serviceModels: r.value1, subserviceModels: r.value2));
-      debugPrint('Success response: $r');
+        emit(ServiceAndSubserviceListLoaded(
+            serviceModels: r.value1, subserviceModels: r.value2));
+        debugPrint('Success response: $r');
       },
     );
   }
+
 }

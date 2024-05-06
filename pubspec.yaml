@@ -57,6 +57,7 @@ dependencies:
   google_maps_flutter: ^2.5.3
   pretty_qr_code: ^3.3.0
   flutter_rating_bar: ^4.0.1
+  mobile_scanner: ^4.0.1
 
 dev_dependencies:
   flutter_test:
