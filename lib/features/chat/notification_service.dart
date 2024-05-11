@@ -5,13 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:quikhyr_worker/common/quik_routes.dart';
+import 'package:quikhyr_worker/common/quik_secure_constants.dart';
 
 import '../../common/routes/router.dart';
-import '../notification/cubit/notification_cubit.dart';
-import 'presentation/screens/chat_conversation_screen.dart';
 
 const channel = AndroidNotificationChannel(
     'high_importance_channel', 'Hign Importance Notifications',
@@ -20,8 +18,8 @@ const channel = AndroidNotificationChannel(
     playSound: true);
 
 class NotificationsService {
-  static const key =
-      'AAAAkTLRTRc:APA91bFxWxSHRNz727vGSWXat7DKWqoDHE8e7ph9yh0E2HFnLKGNcSZ5zJjsCZB_HbiPG2U2ZEYGnpj0-Ue0AvRygt-SZ4ncmcCNe1LlsfmduDUQYc51m-P7Ro_FLG8iKmW4Rw9uLEMT';
+  static final key =
+      notificationKey;
 
   final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 

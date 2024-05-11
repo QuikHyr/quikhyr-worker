@@ -1,11 +1,9 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
-import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/common/quik_spacings.dart';
 import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/clickable_svg_icon.dart';

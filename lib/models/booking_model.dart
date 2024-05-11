@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../common/enums/status.dart';
 import 'location_model.dart';
