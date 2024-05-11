@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:multi_select_flutter/multi_select_flutter.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:quikhyr_worker/common/bloc/worker_bloc.dart';
 import 'package:quikhyr_worker/common/quik_asset_constants.dart';
 import 'package:quikhyr_worker/common/quik_colors.dart';
@@ -19,7 +18,6 @@ import 'package:quikhyr_worker/features/auth/blocs/sign_in_bloc/sign_in_bloc.dar
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
 import 'package:quikhyr_worker/features/chat/firebase_storage_service.dart';
 import 'package:quikhyr_worker/features/chat/media_service.dart';
-import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'package:quikhyr_worker/models/location_model.dart';
 import 'package:quikhyr_worker/models/service_model.dart';
 import 'package:quikhyr_worker/models/subservices_model.dart';
@@ -38,7 +36,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   // int _curr = 0;
   final TextEditingController _passwordController = TextEditingController();
   bool isLoading = false;
-  static final notifications = NotificationsService();
+  // static final notifications = NotificationsService();
 
   @override
   void initState() {
@@ -129,7 +127,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final GlobalKey<FormState> _signUpFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _workerDetailsProfileFormKey =
       GlobalKey<FormState>();
-  final GlobalKey<FormState> _profileSummaryFormKey = GlobalKey<FormState>();
+  // final GlobalKey<FormState> _profileSummaryFormKey = GlobalKey<FormState>();
 
   final GlobalKey<FormState> _setPasswordFormKey = GlobalKey<FormState>();
   final GlobalKey<FormState> _profileInfoFormKey = GlobalKey<FormState>();

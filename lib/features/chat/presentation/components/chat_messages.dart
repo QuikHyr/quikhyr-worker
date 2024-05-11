@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:provider/provider.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
 import 'package:quikhyr_worker/features/chat/presentation/components/chat_booking_bubble.dart';

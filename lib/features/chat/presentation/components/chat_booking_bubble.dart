@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:quikhyr_worker/common/quik_colors.dart';
-import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/models/chat_message_model.dart';
 
 class BookingRequestBubble extends StatefulWidget {

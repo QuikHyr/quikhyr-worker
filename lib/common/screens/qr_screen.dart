@@ -3,16 +3,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
-import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-import '../quik_asset_constants.dart';
 import '../quik_colors.dart';
 import '../quik_secure_constants.dart';
-import '../quik_spacings.dart';
-import '../quik_themes.dart';
-import '../widgets/gradient_separator.dart';
 import '../widgets/quik_app_bar.dart';
-import '../widgets/quik_search_bar.dart';
 
 import 'package:http/http.dart' as http;
 
@@ -27,7 +21,7 @@ class QrScreen extends StatefulWidget {
 
 class _QrScreenState extends State<QrScreen> with WidgetsBindingObserver {
   Future<void> updateBookingStatus(String bookingId) async {
-  final url = '${baseUrl}/bookings/$bookingId';
+  final url = '$baseUrl/bookings/$bookingId';
   final body = jsonEncode({'status': 'Completed'});  // Use jsonEncode
 
   try {

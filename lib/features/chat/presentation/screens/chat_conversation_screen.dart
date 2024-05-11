@@ -1,31 +1,21 @@
 import 'dart:convert';
 
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
-import 'package:multi_select_flutter/dialog/multi_select_dialog_field.dart';
-import 'package:multi_select_flutter/util/multi_select_item.dart';
 import 'package:provider/provider.dart';
 import 'package:quikhyr_worker/common/quik_colors.dart';
 import 'package:quikhyr_worker/common/quik_dialogs.dart';
-import 'package:quikhyr_worker/common/quik_spacings.dart';
-import 'package:quikhyr_worker/common/quik_themes.dart';
 import 'package:quikhyr_worker/common/widgets/longIconButton.dart';
 import 'package:quikhyr_worker/common/widgets/short_icon_button.dart';
 import 'package:quikhyr_worker/features/auth/blocs/bloc/service_and_subservice_list_bloc.dart';
 import 'package:quikhyr_worker/features/auth/presentation/components/my_text_field.dart';
-import 'package:quikhyr_worker/features/booking/repository/booking_repository.dart';
 import 'package:quikhyr_worker/features/chat/firebase_firestore_service.dart';
 import 'package:quikhyr_worker/features/chat/firebase_provider.dart';
 import 'package:quikhyr_worker/features/chat/notification_service.dart';
 import 'package:quikhyr_worker/features/chat/presentation/components/chat_messages.dart';
 import 'package:quikhyr_worker/features/chat/presentation/components/chat_text_field.dart';
-import 'package:quikhyr_worker/models/simple_booking_model.dart';
-import 'package:quikhyr_worker/models/location_model.dart';
-import 'package:quikhyr_worker/models/service_model.dart';
 import 'package:quikhyr_worker/models/subservices_model.dart';
 
 import '../../../../common/quik_secure_constants.dart';
