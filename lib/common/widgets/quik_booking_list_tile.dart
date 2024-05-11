@@ -46,7 +46,7 @@ class QuikBookingListTile extends StatelessWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(booking.workerName,
+            Text(booking.clientName ?? booking.workerName,
                 style: workerListNameTextStyle),
             QuikSpacing.vS8(),
             Text(booking.serviceName,
@@ -72,7 +72,7 @@ class QuikBookingListTile extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ClickableSvgIcon(
-                svgAsset: QuikAssetConstants.qrCodeSvg,
+                svgAsset: QuikAssetConstants.qrScanSvg,
                 height: 32,
                 width: 32,
                 onTap: () {

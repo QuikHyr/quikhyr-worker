@@ -68,6 +68,6 @@ class QuikAssetConstants {
   static const String qrCodeLargeSvg = 'assets/icons/qr_code_large.svg';
   static const String arrowRightUpSvg = 'assets/icons/arrow_right_up.svg';
   static const String ratingSvg = 'assets/icons/feedback_active.svg';
-
+  static const String qrScanSvg = 'assets/icons/qr_scan.svg';
 
 }

@@ -318,10 +318,12 @@ class _ChatConversationScreenState extends State<ChatConversationScreen> {
                             ),
                             if (_selectedService != null)
                               DropdownButton<SubserviceModel>(
+                                
                                 value: _selectedSubService,
                                 items: _serviceSubserviceMap[_selectedService]!
                                     .map((subService) {
                                   return DropdownMenuItem<SubserviceModel>(
+                                    
                                     value: subService,
                                     child: Text(subService.name),
                                   );

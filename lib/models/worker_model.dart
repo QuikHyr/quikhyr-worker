@@ -9,6 +9,7 @@ class WorkerModel extends Equatable {
   final String id;
   final String? summary;
   final String name;
+  final num? waitingList;
   final String fcmToken;
   final bool isVerified;
   final bool isActive;
@@ -26,6 +27,7 @@ class WorkerModel extends Equatable {
   final List<String> serviceIds;
 
   const WorkerModel({
+    this.waitingList,
     this.locationName = "Initial Location",
     this.summary,
     this.rating,
@@ -111,6 +113,7 @@ class WorkerModel extends Equatable {
 
   factory WorkerModel.fromMap(Map<String, dynamic> map) {
     return WorkerModel(
+      waitingList: map['waitingList'] != null ? map['waitingList'] as num : 0.0,
       rating: map['rating'] != null ? map['rating'] as num : 0.0,
       summary: map['summary'] != null
           ? map['summary'] as String
@@ -152,7 +155,6 @@ class WorkerModel extends Equatable {
       summary,
       locationName,
       id,
-      
       name,
       age,
       available,

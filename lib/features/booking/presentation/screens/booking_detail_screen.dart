@@ -37,7 +37,7 @@ class BookingDetailScreen extends StatelessWidget {
           trailingWidgets: [
             if (booking.status == Status.notCompleted)
               ClickableSvgIcon(
-                  svgAsset: QuikAssetConstants.qrCodeSvg,
+                  svgAsset: QuikAssetConstants.qrScanSvg,
                   height: 32,
                   width: 32,
                   onTap: () {

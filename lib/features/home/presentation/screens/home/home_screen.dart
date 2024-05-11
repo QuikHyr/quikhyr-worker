@@ -206,7 +206,7 @@ class HomeScreen extends StatelessWidget {
                             ),
                             QuikSpacing.hS16(),
                             Container(
-                              padding: EdgeInsets.all(16),
+                              padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 color: quikHyrYellowBg,
                                 borderRadius: BorderRadius.circular(16),
@@ -234,7 +234,7 @@ class HomeScreen extends StatelessWidget {
                                 style: workerListNameTextStyle,
                               ),
                               const Spacer(),
-                              CupertinoSwitch(
+                              if(state.worker.waitingList == 0)CupertinoSwitch(
                                   thumbColor: secondary,
                                   activeColor: quikHyrYellow,
                                   trackColor: quikHyrYellow.withOpacity(0.3),
@@ -243,6 +243,16 @@ class HomeScreen extends StatelessWidget {
                                     context
                                         .read<WorkerBloc>()
                                         .add(UpdateAvailability(onChanged));
+                                  })
+                                  else CupertinoSwitch(
+                                  thumbColor: secondary,
+                                  activeColor: quikHyrYellow,
+                                  trackColor: quikHyrYellow.withOpacity(0.3),
+                                  value: state.worker.available,
+                                  onChanged: (onChanged) {
+                                    // context
+                                    //     .read<WorkerBloc>()
+                                    //     .add(UpdateAvailability(onChanged));
                                   }),
                               QuikSpacing.hS16(),
                             ],

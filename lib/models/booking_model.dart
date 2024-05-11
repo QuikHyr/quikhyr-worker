@@ -50,6 +50,7 @@ class Booking {
   String? id;
   String serviceName;
   String? clientId;
+  String? clientName;
   bool? hasRated;
   LocationModel? location;
   String serviceAvatar;
@@ -64,6 +65,7 @@ class Booking {
   Status status;
 
   Booking({
+    this.clientName,
     this.hasRated,
     this.id,
     required this.serviceName,
@@ -103,6 +105,7 @@ class Booking {
     // }
 
     return Booking(
+      clientName: json["clientName"] ?? '',
       hasRated: json["hasRated"] ?? false,
       id: json["id"] ?? '',
       serviceName: json["serviceName"] ?? '',
